@@ -73,7 +73,7 @@
         <a href='/'>
             <img src='/logo_sanifae.svg' alt='Sanifae Logo'>
         </a>
-        {#if data.username && data.username != ''}
+        {#if data.username && data.username != 'false'}
             <a href='/users/{data.username}'>
                 {data.username}
             </a>
