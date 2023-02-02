@@ -28,9 +28,9 @@ let calcVote = function(up,down) {
     var rating =  -Math.log((1 / ((((upPadded - downPadded) / (upPadded + downPadded)) + 1) / 2)) - 1) / Math.log(Math.E);
 
     rating = Math.min(rating,10);
-    rating = Math.max(rating,-10);
+    rating = Math.max(rating,-1);
 
-    rating = (rating + 10) / 2;
+    rating = (rating + 11) / 1.1;
 
     return rating * Math.log(totalPadded);
 }

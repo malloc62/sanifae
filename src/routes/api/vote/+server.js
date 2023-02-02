@@ -6,7 +6,7 @@ export async function GET({ url, cookies }) {
 
     var user = await tokenBackend({token});
 
-    if (!user) return;
+    if (!user) return new Response('fail');
 
     var id = url.searchParams.get('post');
     var vote = url.searchParams.get('vote');
