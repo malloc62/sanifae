@@ -1,6 +1,7 @@
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { hash, compare } from 'bcrypt'
+import { calcVote } from './util.js';
 
 const {
     randomBytes
@@ -15,7 +16,7 @@ async function initDb() {
 
     await db.run('CREATE TABLE IF NOT EXISTS auth (username CHAR(64), password CHAR(1024))');
     await db.run('CREATE TABLE IF NOT EXISTS token (username CHAR(64), token CHAR(1024))');
-    await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER)');
+    await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL)');
     await db.run('CREATE TABLE IF NOT EXISTS vote (id CHAR(64), username CHAR(64), type INTEGER)');  
 }
 
@@ -67,10 +68,11 @@ async function loginBackend({user, pass}) {
 async function postCreateBackend({user, content}) {
     var id = randomBytes(10).toString('hex');
 
-    await db.run('INSERT INTO post (username, id, content) VALUES (?, ?, ?)', [
+    await db.run('INSERT INTO post (username, id, content, rating) VALUES (?, ?, ?, ?)', [
         user,
         id,
-        content
+        content,
+        calcVote(0,0)
     ])
 }
 
@@ -84,6 +86,46 @@ async function postGetBackend({id}) {
     }
 
     return posts[0];
+}
+
+async function postGetBulkBackend({page, rows}) {
+    var posts = await db.all('SELECT * from post ORDER BY rating DESC LIMIT ?, ?', [
+        page*rows,
+        rows
+    ])
+
+    return posts;
+}
+
+async function voteBackend({user, id, vote}) {
+    if (!user || !id || user == '' || (vote != 'down' && vote != 'up')) return {};
+
+    await db.run('DELETE FROM vote WHERE username = ? AND id = ?', [
+        user,
+        id
+    ]);
+
+    await db.run('INSERT INTO vote (id, username, type) VALUES (?,?,?)', [
+        id,
+        user,
+        vote == 'up' ? 1 : 2
+    ]);
+
+    var votes = await db.all('SELECT type from vote WHERE id = ?', [
+        id
+    ]) || [];
+
+    var up = votes.filter(x => x.type == 1).length;
+    var down = votes.filter(x => x.type == 2).length;
+
+    await db.run('UPDATE post SET upvotes = ?, downvotes = ?, rating = ? WHERE id = ?', [
+        up,
+        down,
+        calcVote(up,down),
+        id
+    ]);
+
+    return {};
 }
 
 async function tokenBackend({token}) {
@@ -104,5 +146,7 @@ export {
     loginBackend,
     tokenBackend,
     postCreateBackend,
-    postGetBackend
+    postGetBackend,
+    voteBackend,
+    postGetBulkBackend
 }

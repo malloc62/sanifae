@@ -26,7 +26,18 @@
     #main {
         min-height: 250px;
     }
+
+    #main.tiny {
+        min-height: initial;
+        height: 100px;
+        overflow: hidden;
+    }
 </style>
+
+
+<script>
+    export let tiny = false;
+</script>
 
 <div id='content'>
     <div id='header'>
@@ -34,7 +45,7 @@
             Header
         </slot>
     </div>
-    <div id='main'>
+    <div id='main' class='{tiny ? "tiny" : ""}'>
         <slot name="main">
             <p>Content</p>
         </slot>

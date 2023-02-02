@@ -1,15 +1,22 @@
 <script>
-    import Area from '$lib/Area.svelte';
+    import Post from '$lib/Post.svelte';
+
+    /** @type {import('./$types').PageData} */
+    export let data;
 </script>
 
-<Area>
-    <p slot="header">
-        Welcome to SvelteKit
-    </p>
-    <p slot="main">
-        Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-    </p>
-    <p slot="footer">
-        
-    </p>
-</Area>
+{#each data.postJson as post}
+    <Post
+        success={post.success}
+        username={post.username}
+        content={post.content}
+        upvotes={post.upvotes}
+        downvotes={post.downvotes}
+        id={post.id}
+    ></Post>
+{/each}
+
+<p>
+    <a data-sveltekit-reload href='?page={data.id+1}'>Next page</a>
+</p>
+<p></p>

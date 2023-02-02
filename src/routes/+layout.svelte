@@ -46,6 +46,9 @@
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
+
+        position: sticky;
+        top: 0;
     }
 
     #logo a {

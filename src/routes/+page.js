@@ -4,16 +4,12 @@ export async function load({ fetch, params, url }) {
 
     var voteType = search.get('vote');
 
-    var id = params.post;
-
-    if (voteType) {
-        await fetch(`/api/vote?post=${id}&vote=${voteType}`);
-    }
+    var id = search.get('page') * 1;
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const res = await fetch(`/api/post?post=${id}`);
+    const res = await fetch(`/api/explore?page=${id}`);
     const postJson = await res.json();
 
-    return postJson;
+    return { postJson, id };
 }

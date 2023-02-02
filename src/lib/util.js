@@ -20,7 +20,23 @@ let checkRegex = function(string, field, regex) {
     return false;
 }
 
+let calcVote = function(up,down) {
+    var upPadded = up + 3;
+    var downPadded = down + 3;
+    var totalPadded = Math.max(up + down, 3);
+
+    var rating =  -Math.log((1 / ((((upPadded - downPadded) / (upPadded + downPadded)) + 1) / 2)) - 1) / Math.log(Math.E);
+
+    rating = Math.min(rating,10);
+    rating = Math.max(rating,-10);
+
+    rating = (rating + 10) / 2;
+
+    return rating * Math.log(totalPadded);
+}
+
 export {
     checkLength,
-    checkRegex
+    checkRegex,
+    calcVote
 };
