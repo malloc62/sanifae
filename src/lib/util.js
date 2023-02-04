@@ -35,8 +35,20 @@ let calcVote = function(up,down) {
     return rating * Math.log(totalPadded);
 }
 
+let handleSubmit = async e => {
+    const ACTION_URL = e.target.action
+
+    const formData = new FormData(e.target)
+        
+    return await fetch(ACTION_URL, {
+        method: 'POST',
+        body: formData
+    }).then(x => x.text());
+}
+
 export {
     checkLength,
     checkRegex,
-    calcVote
+    calcVote,
+    handleSubmit
 };

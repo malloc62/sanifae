@@ -1,7 +1,10 @@
+const rowCount = 5;
+
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { hash, compare } from 'bcrypt'
 import { calcVote } from './util.js';
+import { checkLength, checkRegex } from './util.js';
 
 const {
     randomBytes
@@ -20,7 +23,20 @@ async function initDb() {
     await db.run('CREATE TABLE IF NOT EXISTS vote (id CHAR(64), username CHAR(64), type INTEGER)');  
 }
 
-async function registerBackend({user, pass}) {
+var backend = {};
+
+backend.register = async ({user, pass, pass2}) => {
+    var lengthCheck = false;
+
+    lengthCheck = 
+      checkLength(pass,'Password',4,1024) ||
+      checkLength(user,'Username',1,64) ||
+      checkRegex(user,'Username',/[^A-Za-z0-9\-\_]/g);
+
+    if (lengthCheck) return lengthCheck;
+
+    if (pass != pass2) return {'success': 'Passwords don\'t match.'};
+    
     if (!db) await initDb();
 
     var existingAccounts = await db.all('SELECT username FROM auth WHERE username = ?',[
@@ -37,10 +53,10 @@ async function registerBackend({user, pass}) {
         passHash
     ])
 
-    return { success: 'Successfully created account.' };
+    return { success: 'Successfully created account.', location: '/'};
 }
 
-async function loginBackend({user, pass}) {
+backend.login = async ({user, pass, cookies}) => {
     if (!db) await initDb();
 
     var existingAccounts = await db.all('SELECT username, password FROM auth WHERE username = ?',[
@@ -62,10 +78,28 @@ async function loginBackend({user, pass}) {
         token
     ])
 
-    return { success: 'Successfully logged into account.', token };
+    if (token) {
+        cookies.set('token',token, {
+          maxAge: 60 * 60 * 24 * 7,
+          path: '/'
+        });
+    };
+
+    return { success: 'Successfully logged into account.', data: token, location: '/'};
 }
 
-async function postCreateBackend({user, content}) {
+backend.postCreate = async ({cookies, content}) => {
+    if (!db) await initDb();
+
+    var lengthCheck = checkLength(content,'Post content',1,10240);
+
+    if (lengthCheck)
+        return lengthCheck;
+
+    var user = (await backend.token({cookies})).data;
+
+    if (!user || !content || user == '') return {'success': 'Not authorized.' };
+
     var id = randomBytes(10).toString('hex');
 
     await db.run('INSERT INTO post (username, id, content, rating) VALUES (?, ?, ?, ?)', [
@@ -74,9 +108,13 @@ async function postCreateBackend({user, content}) {
         content,
         calcVote(0,0)
     ])
+
+    return {'success': 'Your post has been broadcasted!' };
 }
 
-async function postGetBackend({id}) {
+backend.postGet = async ({id}) => {
+    if (!db) await initDb();
+
     var posts = await db.all('SELECT * from post WHERE id = ?', [
         id
     ])
@@ -85,20 +123,26 @@ async function postGetBackend({id}) {
         return {'success': 'Post does not exist.'}
     }
 
-    return posts[0];
+    return {data: posts[0]};
 }
 
-async function postGetBulkBackend({page, rows}) {
+backend.postBulk = async ({page}) => {
+    if (!db) await initDb();
+
     var posts = await db.all('SELECT * from post ORDER BY rating DESC LIMIT ?, ?', [
-        page*rows,
-        rows
+        page*rowCount,
+        rowCount
     ])
 
-    return posts;
+    return {data: posts};
 }
 
-async function voteBackend({user, id, vote}) {
-    if (!user || !id || user == '' || (vote != 'down' && vote != 'up')) return {};
+backend.vote = async ({cookies, id, vote}) => {
+    if (!db) await initDb();
+
+    var user = (await backend.token({cookies})).data;
+
+    if (!user || !id || user == '' || (vote != 'down' && vote != 'up')) return {success: 'fail' };
 
     await db.run('DELETE FROM vote WHERE username = ? AND id = ?', [
         user,
@@ -125,28 +169,24 @@ async function voteBackend({user, id, vote}) {
         id
     ]);
 
-    return {};
+    return {data: {up,down}};
 }
 
-async function tokenBackend({token}) {
+backend.token = async ({cookies}) => {
     if (!db) await initDb();
 
+    var tokenIn = cookies.get('token');
+
     var existingAccounts = await db.all('SELECT username from token WHERE token = ?',[
-        token
+        tokenIn
     ]);
     
     if (!existingAccounts || existingAccounts.length < 1)
         return false;
 
-    return existingAccounts[0].username;
+    return {data: existingAccounts[0].username};
 }
 
 export {
-    registerBackend,
-    loginBackend,
-    tokenBackend,
-    postCreateBackend,
-    postGetBackend,
-    voteBackend,
-    postGetBulkBackend
+    backend
 }

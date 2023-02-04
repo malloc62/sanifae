@@ -6,6 +6,24 @@
     let query = (id) ? `/post/${id}` : '';
     
     let contentSplit = content.split('\n');
+
+    let fData;
+
+    function vote(v) {
+        fData = (new FormData());
+
+        fData.append('vote',v);
+        fData.append('id',id);
+
+        fetch('/api/vote', {
+            method: 'POST',
+            body: fData
+        }).then(async x => {
+            var j = (await x.json());
+            upvotes = j.data.up;
+            downvotes = j.data.down;
+        })
+    }
 </script>
 
 <style>
@@ -48,7 +66,7 @@
         </span>
         <span slot="footer">
             <span class='vote-area'>
-                <a data-sveltekit-reload href='{query}?vote=up'>
+                <a on:click={() => vote('up')} href=''>
                     <img src='/upvote.svg' class='button' alt='Upvote'>
                 </a>
                 <span class='votes'>
@@ -56,7 +74,7 @@
                 </span>
             </span>
             <span class='vote-area'>
-                <a data-sveltekit-reload href='{query}?vote=down'>
+                <a on:click={() => vote('down')} href=''>
                     <img src='/downvote.svg' class='button' alt='Downvote'>
                 </a>
                 <span class='votes'>

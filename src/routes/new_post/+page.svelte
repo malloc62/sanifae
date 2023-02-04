@@ -1,8 +1,8 @@
 <script>
     import Area from '$lib/Area.svelte';
 
-    /** @type {import('./$types').PageData} */
-    export let data;
+    import { handleSubmit } from '$lib/util.js';
+
     /** @type {import('./$types').ActionData} */
     export let form;
 </script>
@@ -18,7 +18,7 @@
     <p slot="header">
         Create Post
     </p>
-    <form slot="main" method='POST'>
+    <form slot="main" action='/api/postCreate' method='POST' on:submit|preventDefault={async e => form = JSON.parse(await handleSubmit(e)) }>
         <p>
             <textarea name='content'></textarea>
         </p>

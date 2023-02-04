@@ -1,33 +1,46 @@
 <script>
     import Area from '$lib/Area.svelte';
+    import { handleSubmit } from '$lib/util.js';
 
-    /** @type {import('./$types').PageData} */
-    export let data;
-    /** @type {import('./$types').ActionData} */
-    export let form;
+    export let form = {};
+
+    let submitFunc = async e => form = JSON.parse(await handleSubmit(e))
 </script>
 
-<Area>
+<Area handleSubmit=''>
     <p slot="header">
-        Log in / Register
+        Log in
     </p>
-    <form slot="main" method='POST'>
-        <p>
-            Username: <input name='user'>
-        </p>
-        <p>
-            Password: <input type='password' name='pass'>
-        </p>
-        <p>
-            Confirm Password: <input type='password' name='pass2'>
-        </p>
-        <p>
-            <input formaction="?/login" type='submit' value='Log in'>
-        </p>
-        <p>
-            <input formaction="?/register" type='submit' value='Register'>
-        </p>
-    </form>
+
+    <span slot='main'>
+        <h2>Login</h2>
+        <form action='/api/login' on:submit|preventDefault={submitFunc} method='POST'>
+            <p>
+                Username: <input name='user'>
+            </p>
+            <p>
+                Password: <input type='password' name='pass'>
+            </p>
+            <p>
+                <input type='submit' value='Log in'>
+            </p>
+        </form>
+        <h2>Register</h2>
+        <form action='/api/register' on:submit|preventDefault={submitFunc} method='POST'>
+            <p>
+                Username: <input name='user'>
+            </p>
+            <p>
+                Password: <input type='password' name='pass'>
+            </p>
+            <p>
+                Confirm Password: <input type='password' name='pass2'>
+            </p>
+            <p>
+                <input type='submit' value='Register'>
+            </p>
+        </form>
+    </span>
     <p slot="footer">
         {#if form?.success}
             <p>{form?.success}</p>

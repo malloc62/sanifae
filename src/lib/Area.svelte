@@ -37,6 +37,8 @@
 
 <script>
     export let tiny = false;
+
+    let form;
 </script>
 
 <div id='content'>

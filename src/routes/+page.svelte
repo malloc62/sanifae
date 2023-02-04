@@ -5,7 +5,7 @@
     export let data;
 </script>
 
-{#each data.postJson as post}
+{#each data.postJson.data as post}
     <Post
         success={post.success}
         username={post.username}
