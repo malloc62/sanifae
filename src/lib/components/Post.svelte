@@ -55,7 +55,7 @@
 {:else}
     <Area tiny='{!!id}'>
         <span slot="header">
-            <a href='/users/{username}'>
+            <a href='/user/{username}'>
                 {username}
             </a>
         </span>
