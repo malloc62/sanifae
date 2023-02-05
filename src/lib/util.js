@@ -35,6 +35,19 @@ let calcVote = function(up,down) {
     return rating * Math.log(totalPadded);
 }
 
+let calcVoteUser = function(up,down) {
+    var upPadded = up + 3;
+    var downPadded = down + 3;
+    var totalPadded = Math.max(up + down, 3);
+
+    var rating =  -Math.log((1 / ((((upPadded - downPadded) / (upPadded + downPadded)) + 1) / 2)) - 1) / Math.log(Math.E);
+
+    rating = Math.min(rating,10);
+    rating = Math.max(rating,-10);
+
+    return Math.round(rating * Math.log(totalPadded) * 10);
+}
+
 let handleSubmit = async e => {
     const ACTION_URL = e.target.action
 
@@ -50,5 +63,6 @@ export {
     checkLength,
     checkRegex,
     calcVote,
-    handleSubmit
+    handleSubmit,
+    calcVoteUser
 };

@@ -1,4 +1,4 @@
-import { backend } from '../../lib/db.js';
+import { backend } from '../../lib/db/db.js';
 import { checkLength, checkRegex } from '../../lib/util.js';
 
 /** @type {import('./$types').Actions} */

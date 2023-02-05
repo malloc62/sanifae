@@ -1,5 +1,5 @@
 <script>
-    import Area from '$lib/Area.svelte';
+    import Area from '$lib/components/Area.svelte';
     import { handleSubmit } from '$lib/util.js';
 
     export let form = {};

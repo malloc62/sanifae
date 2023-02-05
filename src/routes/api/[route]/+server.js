@@ -1,4 +1,4 @@
-import { backend } from '../../../lib/db.js';
+import { backend } from '../../../lib/db/db.js';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url, cookies, params }) {
