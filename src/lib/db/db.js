@@ -1,13 +1,16 @@
 const rowCount = 5;
 
+const AUTH_ACTIONS = [
+    'postCreate',
+    'vote'
+];
+
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { hash, compare } from 'bcrypt'
-import { calcVote, calcVoteUser, heckLength, checkRegex } from '../util.js';
+import { randomBytes } from 'node:crypto';
 
-const {
-    randomBytes
-} = await import('node:crypto');
+import { calcVote, calcVoteUser, checkLength, checkRegex } from '../util.js';
 
 var db;
 async function initDb() {
@@ -23,9 +26,22 @@ async function initDb() {
     await db.run('CREATE TABLE IF NOT EXISTS user (username CHAR(64), followers INTEGER, following INTEGER, upvotes INTEGER, downvotes INTEGER, reputation REAL)');  
 }
 
+let backendProxy = async ({route, backendParams}) => {
+    if (!db) await initDb();
+
+    if (AUTH_ACTIONS.indexOf(route) != -1) {
+        var user = (await backend.token({cookies: backendParams.cookies})).data;
+        if (!user || user == '') return {'success': 'Not authorized.' };
+
+        backendParams['user'] = user;
+    }
+
+    return backend[route](backendParams);
+}
+
 var backend = {};
 
-var updateUser = async ({user}) => {
+let updateUser = async ({user}) => {
     let allPosts = await db.all('SELECT * from post WHERE username = ?', [
         user
     ]);
@@ -64,8 +80,6 @@ backend.register = async ({user, pass, pass2}) => {
     if (lengthCheck) return lengthCheck;
 
     if (pass != pass2) return {'success': 'Passwords don\'t match.'};
-    
-    if (!db) await initDb();
 
     var existingAccounts = await db.all('SELECT username FROM auth WHERE username = ?',[
         user
@@ -85,8 +99,6 @@ backend.register = async ({user, pass, pass2}) => {
 }
 
 backend.login = async ({user, pass, cookies}) => {
-    if (!db) await initDb();
-
     var existingAccounts = await db.all('SELECT username, password FROM auth WHERE username = ?',[
         user
     ]);
@@ -116,17 +128,13 @@ backend.login = async ({user, pass, cookies}) => {
     return { success: 'Successfully logged into account.', data: token, location: '/'};
 }
 
-backend.postCreate = async ({cookies, content}) => {
-    if (!db) await initDb();
-
+backend.postCreate = async ({content}) => {
     var lengthCheck = checkLength(content,'Post content',1,10240);
 
     if (lengthCheck)
         return lengthCheck;
 
-    var user = (await backend.token({cookies})).data;
-
-    if (!user || !content || user == '') return {'success': 'Not authorized.' };
+    if (!content) return {'success': 'There is no post!' };
 
     var id = randomBytes(10).toString('hex');
 
@@ -141,8 +149,6 @@ backend.postCreate = async ({cookies, content}) => {
 }
 
 backend.postGet = async ({id}) => {
-    if (!db) await initDb();
-
     var posts = await db.all('SELECT * from post WHERE id = ?', [
         id
     ])
@@ -155,8 +161,6 @@ backend.postGet = async ({id}) => {
 }
 
 backend.userGet = async ({user}) => {
-    if (!db) await initDb();
-
     var posts = await db.all('SELECT * from user WHERE username = ?', [
         user
     ])
@@ -169,8 +173,6 @@ backend.userGet = async ({user}) => {
 }
 
 backend.postBulk = async ({page,user}) => {
-    if (!db) await initDb();
-
     var posts;
 
     if (!user) {
@@ -189,12 +191,8 @@ backend.postBulk = async ({page,user}) => {
     return {data: posts};
 }
 
-backend.vote = async ({cookies, id, vote}) => {
-    if (!db) await initDb();
-
-    var user = (await backend.token({cookies})).data;
-
-    if (!user || !id || user == '' || (vote != 'down' && vote != 'up')) return {success: 'fail' };
+backend.vote = async ({cookies, id, vote, user}) => {
+    if (!id || (vote != 'down' && vote != 'up')) return {success: 'fail' };
 
     await db.run('DELETE FROM vote WHERE username = ? AND id = ?', [
         user,
@@ -234,8 +232,6 @@ backend.vote = async ({cookies, id, vote}) => {
 }
 
 backend.token = async ({cookies}) => {
-    if (!db) await initDb();
-
     var tokenIn = cookies.get('token');
 
     var existingAccounts = await db.all('SELECT username from token WHERE token = ?',[
@@ -249,5 +245,6 @@ backend.token = async ({cookies}) => {
 }
 
 export {
+    backendProxy,
     backend
 }
