@@ -83,6 +83,9 @@
             <a href='/new_post'>
                 Create
             </a>
+            <a href='/new_file'>
+                Create file
+            </a>
         {:else}
             <a href='/account'>
                 Log in / Register

@@ -59,10 +59,33 @@ let handleSubmit = async e => {
     }).then(x => x.text());
 }
 
+let formatPost = function(post) {
+    post = post.split('\n');
+
+    post = post.map(subPost => {
+        var splitPost = subPost.split('||');
+
+        if (splitPost.length > 1) {
+            var cap1 = splitPost[0];
+
+            if (cap1 == 'img') {
+                var matchCleaned = splitPost[1].replace(/(\s+)/g, '\\$1');
+                splitPost = {'type': 'img', 'url': `/img/${matchCleaned}`};
+
+                return splitPost;
+            }
+        }
+        return subPost;
+    });
+
+    return post;
+}
+
 export {
     checkLength,
     checkRegex,
     calcVote,
     handleSubmit,
-    calcVoteUser
+    calcVoteUser,
+    formatPost
 };

@@ -27,7 +27,7 @@ async function handleReq({ cookies, params, route }) {
     var backendParams = {cookies};
 
     for (const [key, value] of params) {
-        backendParams[key] = value;
+        backendParams[key] = value + '';
     }
 
     return await mainApi({backendParams, route: route});

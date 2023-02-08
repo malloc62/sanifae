@@ -1,11 +1,13 @@
 <script>
     import Area from '$lib/components/Area.svelte';
 
+    import {formatPost} from '$lib/util.js';
+
     export let success, username, content, upvotes, downvotes, id;
 
     let query = (id) ? `/post/${id}` : '';
     
-    let contentSplit = content.split('\n');
+    let contentSplit = formatPost(content || '');
 
     let fData;
 
@@ -38,6 +40,10 @@
     .vote-area {
         margin-right: 30px;
     }
+
+    img {
+        max-width: 250px;
+    }
 </style>
 
 {#if success}
@@ -61,7 +67,11 @@
         </span>
         <span slot="main">
             {#each contentSplit as line}
-                <p>{line}</p>
+                {#if line && line.type == 'img'}
+                    <img src={line.url} alt='Image preview'>
+                {:else}
+                    <p>{line}</p>
+                {/if}
             {/each}
         </span>
         <span slot="footer">

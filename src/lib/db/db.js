@@ -2,14 +2,15 @@ const rowCount = 5;
 
 const AUTH_ACTIONS = [
     'postCreate',
+    'fileCreate',
     'vote'
 ];
 
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { hash, compare } from 'bcrypt'
-import { randomBytes } from 'node:crypto';
-
+import { randomBytes, createHash } from 'node:crypto';
+import { readFile, writeFile } from 'node:fs/promises';
 import { calcVote, calcVoteUser, checkLength, checkRegex } from '../util.js';
 
 var db;
@@ -128,7 +129,7 @@ backend.login = async ({user, pass, cookies}) => {
     return { success: 'Successfully logged into account.', data: token, location: '/'};
 }
 
-backend.postCreate = async ({content}) => {
+backend.postCreate = async ({content, user}) => {
     var lengthCheck = checkLength(content,'Post content',1,10240);
 
     if (lengthCheck)
@@ -145,7 +146,7 @@ backend.postCreate = async ({content}) => {
         calcVote(0,0)
     ])
 
-    return {'success': 'Your post has been broadcasted!' };
+    return {'success': 'Your post has been broadcasted!', 'href': `/post/${id}` };
 }
 
 backend.postGet = async ({id}) => {
@@ -242,6 +243,24 @@ backend.token = async ({cookies}) => {
         return false;
 
     return {data: existingAccounts[0].username};
+}
+
+backend.fileCreate = async({img, extension}) => {
+    const imgHash = createHash('md5').update(img).digest('hex');
+
+    let lengthCheck = checkLength(img,'Image',0,1024*1024*5);
+
+    if (lengthCheck)
+        return lengthCheck;
+
+    const extensionSafe = extension.replace(/(\s+)/g, '\\$1');
+
+    if (extensionSafe != 'png' && extensionSafe != 'jpg' && extensionSafe != 'svg' )
+        return { success: 'Illegal file extension.' };
+
+    writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,img,{encoding: 'base64'});
+
+    return { success: 'Successfully uploaded file.', 'href': `/img/${imgHash}.${extensionSafe}`};
 }
 
 export {

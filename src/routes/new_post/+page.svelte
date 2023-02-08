@@ -26,10 +26,20 @@
             <input formaction="?/create" type='submit' value='Post'>
         </p>
     </form>
-    <p slot="footer">
-        {#if form?.success}
-            <p>{form?.success}</p>
-        {/if}
-        Create a post for the world to see.
-    </p>
+    <span slot="footer">
+        <p>
+            {#if form?.success}
+                {#if form?.href}
+                    <a href='{form?.href}'>{form?.success}</a>
+                {:else}
+                    {form?.success}
+                {/if}
+            {/if}
+        </p>
+        <p>Create a post for the world to see.</p>
+        <h2>Post syntax</h2>
+        <p>
+            <b>img||filename.blah</b> embeds a user-uploaded file in this site
+        </p>
+    </span>
 </Area>
