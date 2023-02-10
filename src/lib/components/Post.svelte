@@ -1,13 +1,11 @@
 <script>
     import Area from '$lib/components/Area.svelte';
-
-    import {formatPost} from '$lib/util.js';
+    import PostButton from '$lib/components/PostButton.svelte';
+    import PostBody from '$lib/components/PostBody.svelte';
 
     export let success, username, content, upvotes, downvotes, id;
 
     let query = (id) ? `/post/${id}` : '';
-    
-    let contentSplit = formatPost(content || '');
 
     let fData;
 
@@ -29,10 +27,7 @@
 </script>
 
 <style>
-    .button {
-        width: auto;
-        height: 35px;
-    }
+    
     .votes {
         font-weight: bold;
         font-size: 1.5rem;
@@ -59,44 +54,31 @@
         </p>
     </Area>
 {:else}
-    <Area tiny='{!!id}'>
+    <Area>
         <span slot="header">
             <a href='/user/{username}'>
                 {username}
             </a>
         </span>
         <span slot="main">
-            {#each contentSplit as line}
-                {#if line && line.type == 'img'}
-                    <img src={line.url} alt='Image preview'>
-                {:else}
-                    <p>{line}</p>
-                {/if}
-            {/each}
+            <PostBody content={content} />
         </span>
         <span slot="footer">
-            <span class='vote-area'>
-                <a on:click={() => vote('up')} href=''>
-                    <img src='/upvote.svg' class='button' alt='Upvote'>
-                </a>
-                <span class='votes'>
-                    {upvotes + 0}
-                </span>
-            </span>
-            <span class='vote-area'>
-                <a on:click={() => vote('down')} href=''>
-                    <img src='/downvote.svg' class='button' alt='Downvote'>
-                </a>
-                <span class='votes'>
-                    {downvotes + 0}
-                </span>
-            </span>
+            <PostButton
+                clickFunc={() => vote('up')}
+                data={upvotes * 1}
+                icon='/upvote.svg'
+            />
+            <PostButton
+                clickFunc={() => vote('down')}
+                data={downvotes * 1}
+                icon='/downvote.svg'
+            />
             {#if id}
-                <span class='vote-area'>
-                    <a href='/post/{id}'>
-                        <img src='/view.svg' class='button' alt='View'>
-                    </a>
-                </span>
+                <PostButton
+                    href='/post/{id}'
+                    icon='/view.svg'
+                />
             {/if}
         </span>
     </Area>

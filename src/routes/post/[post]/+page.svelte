@@ -11,4 +11,5 @@
     content={data.content}
     upvotes={data.upvotes}
     downvotes={data.downvotes}
+    id={data.id}
 ></Post>

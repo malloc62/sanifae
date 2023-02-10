@@ -2,6 +2,7 @@
     :global(:root) {
         --dark-1: #1a1b1d;
         --dark-2: #22242b;
+        --dark-3: #5d606b;
 
         --light-1: #ffffff;
         
@@ -82,9 +83,6 @@
             </a>
             <a href='/new_post'>
                 Create
-            </a>
-            <a href='/new_file'>
-                Create file
             </a>
         {:else}
             <a href='/account'>

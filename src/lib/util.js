@@ -81,11 +81,16 @@ let formatPost = function(post) {
     return post;
 }
 
+function block(bool) {
+    return (bool) ? 'block' : 'inline';
+}
+
 export {
     checkLength,
     checkRegex,
     calcVote,
     handleSubmit,
     calcVoteUser,
-    formatPost
+    formatPost,
+    block
 };
