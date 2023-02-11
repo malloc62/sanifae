@@ -10,5 +10,13 @@ export async function GET({ url, cookies, params }) {
 
     var res = await readFile(`${process.cwd()}/db/post-${imgName}`);
 
-    return new Response(res);
+    var response = new Response(res);
+    var extension = imgName.split('.').pop();
+
+    if (extension == 'svg') {
+        response = new Response(res, {'headers': {
+            'Content-Type':  'image/svg+xml'
+        }});
+    }
+    return response;
 }
