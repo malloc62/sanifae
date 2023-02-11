@@ -4,7 +4,6 @@
         box-shadow: 0px 3px 5px 3px var(--dark-2);
 
         width: min(700px, 90vw);
-        padding: 20px;
         padding-top: 8px;
         margin: 25px;
 
@@ -12,6 +11,10 @@
 
         display: flex;
         flex-direction: column;
+    }
+
+    #content > div {
+        padding: 15px;
     }
 
     #header {
@@ -26,6 +29,7 @@
 
     #header {
         border-bottom: var(--dark-2) solid 2px;
+        width: calc(100% - 30px);
     }
 
     #main {
