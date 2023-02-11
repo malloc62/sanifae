@@ -6,6 +6,8 @@ const AUTH_ACTIONS = [
     'vote'
 ];
 
+const fileSizeLimit = 1024*1024*5;
+
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { hash, compare } from 'bcrypt'
@@ -248,14 +250,14 @@ backend.token = async ({cookies}) => {
 backend.fileCreate = async({img, extension}) => {
     const imgHash = createHash('md5').update(img).digest('hex');
 
-    let lengthCheck = checkLength(img,'Image',0,1024*1024*5);
+    let lengthCheck = checkLength(img,'Image',fileSizeLimit);
 
     if (lengthCheck)
         return lengthCheck;
 
     const extensionSafe = extension.replace(/(\s+)/g, '\\$1');
 
-    if (extensionSafe != 'png' && extensionSafe != 'jpg' && extensionSafe != 'svg' )
+    if (extensionSafe != 'png' && extensionSafe != 'jpg' && extensionSafe != 'svg' || extensionSafe != 'gif')
         return { success: 'Illegal file extension.' };
 
     writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,img,{encoding: 'base64'});
