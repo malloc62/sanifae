@@ -1,6 +1,7 @@
 <style>
     #content {
-        background: var(--dark-1);
+        background: var(--light-1);
+        box-shadow: 0px 3px 5px 3px var(--dark-2);
 
         width: min(700px, 90vw);
         padding: 20px;
@@ -21,6 +22,10 @@
         width: 100%;
 
         padding: 0;
+    }
+
+    #header {
+        border-bottom: var(--dark-2) solid 2px;
     }
 
     #main {

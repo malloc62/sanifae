@@ -1,7 +1,7 @@
 <style>
     .votes {
         font-weight: bold;
-        font-size: 1.5rem;
+        font-size: 0.9rem;
     }
     .vote-area {
         margin-right: 30px;
@@ -9,7 +9,7 @@
 
     .button {
         width: auto;
-        height: 35px;
+        height: 20px;
     }
 
 </style>

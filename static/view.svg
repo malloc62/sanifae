@@ -41,11 +41,11 @@
      id="layer1"
      transform="translate(-53.804537,-76.370715)">
     <path
-       style="color:#000000;fill:#ffffff;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.96999;-inkscape-stroke:none"
+       style="color:#000000;fill:#aaa;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.96999;-inkscape-stroke:none"
        d="m 95.90625,76.370863 c -23.173772,0 -42.101563,18.92779 -42.101563,42.101567 0,23.17377 18.927791,42.10156 42.101563,42.10156 23.17377,0 42.10156,-18.92779 42.10156,-42.10156 0,-23.173777 -18.92779,-42.101567 -42.10156,-42.101567 z m 0,13.228515 c 16.02419,0 28.87305,12.848862 28.87305,28.873052 0,16.02419 -12.84886,28.87304 -28.87305,28.87304 -16.024189,0 -28.873047,-12.84885 -28.873047,-28.87304 0,-16.02419 12.848858,-28.873052 28.873047,-28.873052 z"
        id="path234" />
     <circle
-       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.96999;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#aaa;fill-opacity:1;stroke:#aaa;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.96999;stroke-dasharray:none;stroke-opacity:1"
        id="path3020"
        cx="95.90625"
        cy="118.47243"

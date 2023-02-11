@@ -1,14 +1,14 @@
 <style>
     :global(:root) {
-        --dark-1: #1a1b1d;
-        --dark-2: #22242b;
-        --dark-3: #5d606b;
+        --dark-1: #2b2f36;
+        --dark-2: #d8d8d8;
+        --dark-3: rgb(73, 138, 236);
 
         --light-1: #ffffff;
+        --light-2: #f8f8f8;
         
-        --hyperlink: #97b9eb;
+        --hyperlink: rgb(139, 171, 219);
 
-        color: var(--light-1);
         font-family: 'Open Sans';
     }
 
@@ -20,14 +20,16 @@
     :global(input, textarea) {
         border: 0;
         border-radius: 0.2rem;
+        box-shadow: 0px 2px 2.5px 0px var(--dark-2);
     }
 
     #content {
-        background: var(--dark-2);
+        background: var(--light-2);
 
         height: 100vh;
         width: calc(100vw - 50px);
         padding: 25px;
+        padding-top: 0px;
 
         display: flex;
         flex-direction: column;
@@ -37,11 +39,12 @@
     }
 
     #logo {
+
+        width: calc(100vw - 20px);
+
         background: var(--dark-1);
 
-        padding: 10px;
-
-        border-radius: 50px;
+        padding: 5px;
 
         display: flex;
         flex-direction: row;
@@ -54,11 +57,13 @@
 
     #logo a {
         padding: 10px;
+        color: var(--light-1);
+        font-weight: bold;
     }
 
     #logo img {
-        height: auto;
-        width: 125px;
+        height: 30px;
+        width: auto;
 
         display: block;
     }
@@ -72,7 +77,7 @@
 <div id='content'>
     <div id='logo'>
         <a href='/'>
-            <img src='/logo_sanifae.svg' alt='Sanifae Logo'>
+            <img src='/icon_sanifae.svg' alt='Sanifae Logo'>
         </a>
         {#if data.username && data.username != 'false'}
             <a href='/user/{data.username}'>

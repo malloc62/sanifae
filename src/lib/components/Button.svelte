@@ -6,13 +6,14 @@
 
         font-family: 'Open Sans';
         
-        border-radius: 0.5rem;
+        border-radius: 2rem;
 
         margin: 0.2rem;
     }
 
     .button a {
         color: var(--light-1);
+        font-weight: bold;
     }
 
 </style>

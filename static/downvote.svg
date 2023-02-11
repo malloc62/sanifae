@@ -41,11 +41,11 @@
      id="layer1"
      transform="translate(-48.929905,-129.52741)">
     <path
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:11.90625;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#aaa;stroke-width:11.90625;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="m 56.684592,149.59814 10.887303,12.1325 13.600048,-26.2501"
        id="path3462" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:11.90625;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#aaa;stroke-width:11.90625;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="M 79.370381,172.06252 68.483078,159.93002 54.88303,186.18012"
        id="path8000" />
   </g>

@@ -1,5 +1,6 @@
 <script>
     import Post from '$lib/components/Post.svelte';
+    import Button from '$lib/components/Button.svelte'
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -17,6 +18,6 @@
 {/each}
 
 <p>
-    <a data-sveltekit-reload href='?page={data.id+1}'>Next page</a>
+    <Button clickFunc={() => { window.location.search = 'page=' + ((data.id)-1) }}>Previous page</Button>
+    <Button clickFunc={() => { window.location.search = 'page=' + ((data.id)+1) }}>Next page</Button>
 </p>
-<p></p>
