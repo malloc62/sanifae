@@ -4,12 +4,12 @@
     /** @type {import('./$types').PageData} */
     export let data;
 </script>
-
 <Post
-    success={data.success}
-    username={data.username}
-    content={data.content}
-    upvotes={data.upvotes}
-    downvotes={data.downvotes}
-    id={data.id}
+    success={data.data.success}
+    username={data.data.username}
+    content={data.data.content}
+    upvotes={data.data.upvotes}
+    downvotes={data.data.downvotes}
+    id={data.data.id}
+    isAuthor={data.isAuthor}
 ></Post>

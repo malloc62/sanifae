@@ -32,14 +32,15 @@
 
 <h2>Posts</h2>
 
-{#each data.postJson.data as post}
+{#each data.postJson as data}
     <Post
-        success={post.success}
-        username={post.username}
-        content={post.content}
-        upvotes={post.upvotes}
-        downvotes={post.downvotes}
-        id={post.id}
+        success={data.data.success}
+        username={data.data.username}
+        content={data.data.content}
+        upvotes={data.data.upvotes}
+        downvotes={data.data.downvotes}
+        id={data.data.id}
+        isAuthor={data.isAuthor}
     ></Post>
 {/each}
 

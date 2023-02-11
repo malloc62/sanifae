@@ -3,7 +3,8 @@ const rowCount = 5;
 const AUTH_ACTIONS = [
     'postCreate',
     'fileCreate',
-    'vote'
+    'vote',
+    'postDelete'
 ];
 
 const fileSizeLimit = 1024*1024*16;
@@ -100,6 +101,8 @@ backend.register = async ({user, pass, pass2}) => {
         passHash
     ])
 
+    await updateUser({user: user[0].username});
+
     return { success: 'Successfully created account.', location: '/'};
 }
 
@@ -155,7 +158,18 @@ backend.postCreate = async ({content, user}) => {
     return {'success': 'Your post has been broadcasted!', 'href': `/post/${id}` };
 }
 
-backend.postGet = async ({id}) => {
+backend.postDelete = async ({id, user}) => {
+
+    await db.run('DELETE FROM post WHERE username = ? AND id = ?', [
+        user,
+        id
+    ])
+
+    return {'success': 'Your post has been deleted!', 'href': `/post/${id}` };
+}
+
+
+backend.postGet = async ({id, cookies }) => {
     var posts = await db.all('SELECT * from post WHERE id = ?', [
         id
     ])
@@ -164,7 +178,9 @@ backend.postGet = async ({id}) => {
         return {'success': 'Post does not exist.'}
     }
 
-    return {data: posts[0]};
+    var user = (await backend.token({cookies})).data;
+
+    return {data: posts[0], isAuthor: posts[0].username == user};
 }
 
 backend.userGet = async ({user}) => {

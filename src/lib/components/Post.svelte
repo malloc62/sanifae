@@ -3,7 +3,7 @@
     import PostButton from '$lib/components/PostButton.svelte';
     import PostBody from '$lib/components/PostBody.svelte';
 
-    export let success, username, content, upvotes, downvotes, id;
+    export let success, username, content, upvotes, downvotes, id, isAuthor;
 
     let query = (id) ? `/post/${id}` : '';
 
@@ -24,6 +24,20 @@
             downvotes = j.data.down;
         })
     }
+
+    function deletePost(v) {
+        fData = (new FormData());
+
+        fData.append('id',id);
+
+        fetch('/api/postDelete', {
+            method: 'POST',
+            body: fData
+        }).then(async x => {
+            window.location.href = '/';
+        })
+    }
+
 </script>
 
 <style>
@@ -66,17 +80,25 @@
         <span slot="footer">
             <PostButton
                 clickFunc={() => vote('up')}
-                data={upvotes * 1}
+                data={upvotes * 1 + ' Yes'}
                 icon='/upvote.svg'
             />
             <PostButton
                 clickFunc={() => vote('down')}
-                data={downvotes * 1}
+                data={downvotes * 1 + ' No'}
                 icon='/downvote.svg'
             />
+            {#if isAuthor}
+                <PostButton
+                    clickFunc={() => deletePost()}
+                    data={'Delete'}
+                    icon='/delete.svg'
+                />
+            {/if}
             {#if id}
                 <PostButton
                     href='/post/{id}'
+                    data={'View'}
                     icon='/view.svg'
                 />
             {/if}
