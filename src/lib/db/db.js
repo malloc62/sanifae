@@ -6,7 +6,9 @@ const AUTH_ACTIONS = [
     'vote'
 ];
 
-const fileSizeLimit = 1024*1024*5;
+const fileSizeLimit = 1024*1024*16;
+
+var ridArray = {};
 
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
@@ -132,6 +134,8 @@ backend.login = async ({user, pass, cookies}) => {
 }
 
 backend.postCreate = async ({content, user}) => {
+    if (!content) return {'success': 'No post provided.'}
+
     var lengthCheck = checkLength(content,'Post content',1,10240);
 
     if (lengthCheck)
@@ -247,20 +251,35 @@ backend.token = async ({cookies}) => {
     return {data: existingAccounts[0].username};
 }
 
-backend.fileCreate = async({img, extension}) => {
-    const imgHash = createHash('md5').update(img).digest('hex');
+backend.fileCreate = async({img, extension,id, last }) => {
+    if (ridArray[id] !== '' && !(ridArray[id])) {
+        ridArray[id] = img;
+    } else {
+        ridArray[id] += img;
+    }
 
-    let lengthCheck = checkLength(img,'Image',fileSizeLimit);
+    const imgData = ridArray[id];
 
-    if (lengthCheck)
-        return lengthCheck;
+    if (last != 'true') {
+        return {'success': 'Image still proccessing...'}
+    } else {
+        ridArray[id] = false;
+    }
 
-    const extensionSafe = extension.replace(/(\s+)/g, '\\$1');
+    const imgHash = createHash('md5').update(imgData).digest('hex');
 
-    if (extensionSafe != 'png' && extensionSafe != 'jpg' && extensionSafe != 'svg' || extensionSafe != 'gif')
+    if (!imgHash)
+        return {'success': 'Image not provided.'}
+
+    if (imgHash.length > fileSizeLimit)
+        return {'success': 'Image too big.'}
+
+    const extensionSafe = extension.replace(/[^a-zA-Z]+/g, '\\$1');
+
+    if (extensionSafe != 'png' && extensionSafe != 'jpg' && extensionSafe != 'svg' && extensionSafe != 'gif')
         return { success: 'Illegal file extension.' };
 
-    writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,img,{encoding: 'base64'});
+    writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,imgData,{encoding: 'base64'});
 
     return { success: 'Successfully uploaded file.', 'href': `/img/${imgHash}.${extensionSafe}`};
 }
