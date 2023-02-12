@@ -73,7 +73,7 @@ let formatPost = function(post) {
                 var cap1 = splitPost[0];
     
                 if (cap1 == 'img') {
-                    var matchCleaned = safeName(subPost[1]);
+                    var matchCleaned = safePath(splitPost[1]);
                     splitPost = {'type': 'img', 'url': `/img/${matchCleaned}`};
     
                     return splitPost;
@@ -86,7 +86,6 @@ let formatPost = function(post) {
                 splitPost = {'type': 'link', 'display': subPost, 'url': `/${type}/${subPostIn}`};
 
                 return splitPost;
-
             }
 
             return subPost;
@@ -102,7 +101,8 @@ let block = function(bool) {
 }
 
 let safePath = function(path) {
-    return path.replace(/[^a-zA-Z]+/g, '\\$1')
+    if (path == '..' || path == '.') return '';
+    return path.replace(/[\/]+/g, '')
 }
 
 export {
