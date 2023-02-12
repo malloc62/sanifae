@@ -1,6 +1,7 @@
 <script>
-    import Post from '$lib/components/Post.svelte';
+    import Button from '$lib/components/Button.svelte'
     import Area from '$lib/components/Area.svelte';
+    import PostList from '$lib/components/PostList.svelte';
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -33,33 +34,18 @@
 {:else}
     <Area>
         <span slot="header">
-            <b>
-                Error
-            </b>
+            <a href='/users/{data.user}'>
+                {data.user}
+            </a>
         </span>
         <span slot="main">
         </span>
         <span slot="footer">
-            This user does not exist.
+            This user does not have any statistics available.
         </span>
     </Area>
 {/if}
 
 <h2>Posts</h2>
 
-{#each data.postJson as data}
-    <Post
-        success={data.data.success}
-        username={data.data.username}
-        content={data.data.content}
-        upvotes={data.data.upvotes}
-        downvotes={data.data.downvotes}
-        id={data.data.id}
-        isAuthor={data.isAuthor}
-    ></Post>
-{/each}
-
-<p>
-    <a data-sveltekit-reload href='?page={data.id+1}'>Next page</a>
-</p>
-<p></p>
+<PostList data={data} />

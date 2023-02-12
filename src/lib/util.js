@@ -20,7 +20,7 @@ let checkRegex = function(string, field, regex) {
     return false;
 }
 
-let calcVote = function(up,down) {
+let calcVote = function(up,down, type) {
     var upPadded = up + 3;
     var downPadded = down + 3;
     var totalPadded = Math.max(up + down, 3);
@@ -28,24 +28,18 @@ let calcVote = function(up,down) {
     var rating =  -Math.log((1 / ((((upPadded - downPadded) / (upPadded + downPadded)) + 1) / 2)) - 1) / Math.log(Math.E);
 
     rating = Math.min(rating,10);
-    rating = Math.max(rating,-1);
 
-    rating = (rating + 11) / 1.1;
+    if (type != 'user') {
+        rating = Math.max(rating,-1);
+
+        rating = (rating + 11) / 1.1;
+
+        rating = rating * Math.log(totalPadded);
+    } else {
+        rating = Math.round(rating * Math.log(totalPadded) * 10);
+    }
 
     return rating * Math.log(totalPadded);
-}
-
-let calcVoteUser = function(up,down) {
-    var upPadded = up + 3;
-    var downPadded = down + 3;
-    var totalPadded = Math.max(up + down, 3);
-
-    var rating =  -Math.log((1 / ((((upPadded - downPadded) / (upPadded + downPadded)) + 1) / 2)) - 1) / Math.log(Math.E);
-
-    rating = Math.min(rating,10);
-    rating = Math.max(rating,-10);
-
-    return Math.round(rating * Math.log(totalPadded) * 10);
 }
 
 let handleSubmit = async e => {
@@ -59,6 +53,10 @@ let handleSubmit = async e => {
     }).then(x => x.text());
 }
 
+let safeName = function (text) {
+    return text.replaceAll(/[^A-Za-z0-9\-\_]/g, '');
+}
+
 let formatPost = function(post) {
     post = post.split('\n');
 
@@ -69,29 +67,26 @@ let formatPost = function(post) {
     post = post.map(line => {
         line = line.map(subPost => {
             var splitPost = subPost.split('||');
+            
 
             if (splitPost.length > 1) {
                 var cap1 = splitPost[0];
     
                 if (cap1 == 'img') {
-                    var matchCleaned = splitPost[1].replace(/(\s+)/g, '\\$1');
+                    var matchCleaned = safeName(subPost[1]);
                     splitPost = {'type': 'img', 'url': `/img/${matchCleaned}`};
     
                     return splitPost;
                 }
-            } else if (subPost[0] == '@') {
-                var subPostIn = subPost.substring(0).replaceAll(/[^A-Za-z0-9\-\_]/g, '');
+            } else if (subPost[0] == '@' || subPost[0] == '#') {
+                var subPostIn = safeName(subPost.substring(0));
 
-                splitPost = {'type': 'link', 'display': subPost, 'url': `/user/${subPostIn}`};
+                var type = (subPost[0] == '@') ? 'user' : 'post';
 
-                return splitPost;
-
-            } else if (subPost[0] == '#') {
-                var subPostIn = subPost.substring(0).replaceAll(/[^A-Za-z0-9]/g, '');
-
-                splitPost = {'type': 'link', 'display': subPost, 'url': `/post/${subPostIn}`};
+                splitPost = {'type': 'link', 'display': subPost, 'url': `/${type}/${subPostIn}`};
 
                 return splitPost;
+
             }
 
             return subPost;
@@ -102,8 +97,12 @@ let formatPost = function(post) {
     return post;
 }
 
-function block(bool) {
+let block = function(bool) {
     return (bool) ? 'block' : 'inline';
+}
+
+let safePath = function(path) {
+    return path.replace(/[^a-zA-Z]+/g, '\\$1')
 }
 
 export {
@@ -111,7 +110,7 @@ export {
     checkRegex,
     calcVote,
     handleSubmit,
-    calcVoteUser,
     formatPost,
-    block
+    block,
+    safePath
 };

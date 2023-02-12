@@ -1,4 +1,4 @@
-const rowCount = 5;
+const ROW_COUNT = 5;
 
 const AUTH_ACTIONS = [
     'postCreate',
@@ -7,7 +7,9 @@ const AUTH_ACTIONS = [
     'postDelete'
 ];
 
-const fileSizeLimit = 1024*1024*16;
+const FILE_SIZE_LIMIT = 1024*1024*16;
+
+const VALID_EXTENSIONS = ['png','jpg','jpeg','gif','svg']
 
 var ridArray = {};
 
@@ -15,8 +17,8 @@ import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import { hash, compare } from 'bcrypt'
 import { randomBytes, createHash } from 'node:crypto';
-import { readFile, writeFile } from 'node:fs/promises';
-import { calcVote, calcVoteUser, checkLength, checkRegex } from '../util.js';
+import { writeFile } from 'node:fs/promises';
+import { calcVote, checkLength, checkRegex, safePath } from '../util.js';
 
 var db;
 async function initDb() {
@@ -55,8 +57,6 @@ let updateUser = async ({user}) => {
 
     let upvotes = 0;
     let downvotes = 0;
-    let reputation = 0;
-
     allPosts.forEach(post => {
         upvotes += post.upvotes || 0;
         downvotes += post.downvotes || 0;
@@ -72,7 +72,7 @@ let updateUser = async ({user}) => {
         0,
         upvotes,
         downvotes,
-        calcVoteUser(upvotes,downvotes)
+        calcVote(upvotes,downvotes,'user')
     ]);
 }
 
@@ -169,21 +169,6 @@ backend.postDelete = async ({id, user}) => {
     return {'success': 'Your post has been deleted!', 'href': `/post/${id}` };
 }
 
-
-backend.postGet = async ({id, cookies }) => {
-    var posts = await db.all('SELECT * from post WHERE id = ?', [
-        id
-    ])
-
-    if (!posts || posts.length < 1) {
-        return {'success': 'Post does not exist.'}
-    }
-
-    var user = (await backend.token({cookies})).data;
-
-    return {data: posts[0], isAuthor: posts[0].username == user};
-}
-
 backend.userGet = async ({user}) => {
     var posts = await db.all('SELECT * from user WHERE username = ?', [
         user
@@ -208,26 +193,36 @@ backend.userBio = async ({user}) => {
     return {data: posts[0]};
 }
 
-backend.postBulk = async ({page,user}) => {
+backend.postBulk = async ({page, id, user, cookies}) => {
     var posts;
 
-    if (!user) {
+    var userAuth = (await backend.token({cookies})).data;
+
+    if (!user && !id) {
         posts = await db.all('SELECT * from post ORDER BY rating DESC LIMIT ?, ?', [
-            page*rowCount,
-            rowCount
+            page*ROW_COUNT,
+            ROW_COUNT
+        ])
+    } else if (id) {
+        posts = await db.all('SELECT * from post WHERE id = ?', [
+            id
         ])
     } else {
         posts = await db.all('SELECT * from post WHERE username = ? ORDER BY rating DESC LIMIT ?, ?', [
             user,
-            page*rowCount,
-            rowCount
+            page*ROW_COUNT,
+            ROW_COUNT
         ])
     }
+
+    posts = posts.map(post => {
+        return {...post, isAuthor: userAuth == post.username};
+    })
 
     return {data: posts};
 }
 
-backend.vote = async ({cookies, id, vote, user}) => {
+backend.vote = async ({id, vote, user}) => {
     if (!id || (vote != 'down' && vote != 'up')) return {success: 'fail' };
 
     await db.run('DELETE FROM vote WHERE username = ? AND id = ?', [
@@ -300,12 +295,12 @@ backend.fileCreate = async({img, extension,id, last }) => {
     if (!imgHash)
         return {'success': 'Image not provided.'}
 
-    if (imgHash.length > fileSizeLimit)
+    if (imgHash.length > FILE_SIZE_LIMIT)
         return {'success': 'Image too big.'}
 
-    const extensionSafe = extension.replace(/[^a-zA-Z]+/g, '\\$1');
+    const extensionSafe = safePath(extension);
 
-    if (extensionSafe != 'png' && extensionSafe != 'jpg' && extensionSafe != 'svg' && extensionSafe != 'gif')
+    if (VALID_EXTENSIONS.indexOf(extensionSafe) == -1)
         return { success: 'Illegal file extension.' };
 
     writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,imgData,{encoding: 'base64'});
