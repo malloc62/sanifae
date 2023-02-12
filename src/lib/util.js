@@ -83,7 +83,7 @@ let formatPost = function(post) {
 
                 var type = (subPost[0] == '@') ? 'user' : 'post';
 
-                splitPost = {'type': 'link', 'display': subPost, 'url': `/${type}/${subPostIn}`};
+                splitPost = {'type': 'link', 'display': subPost, 'subtype': type, 'url': `/${type}/${subPostIn}`};
 
                 return splitPost;
             }

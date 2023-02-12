@@ -80,12 +80,12 @@
         <span slot="footer">
             <PostButton
                 clickFunc={() => vote('up')}
-                data={upvotes * 1 + ' Yes'}
+                data={upvotes * 1}
                 icon='/upvote.svg'
             />
             <PostButton
                 clickFunc={() => vote('down')}
-                data={downvotes * 1 + ' No'}
+                data={downvotes * 1 }
                 icon='/downvote.svg'
             />
             {#if isAuthor}
@@ -102,6 +102,11 @@
                     icon='/view.svg'
                 />
             {/if}
+            <PostButton
+                href='/new_post?init=%23{id}'
+                data={'Reply'}
+                icon='/view.svg'
+            />
         </span>
     </Area>
 {/if}

@@ -1,17 +1,19 @@
 <script>
+    import { page } from '$app/stores'
+
     import Area from '$lib/components/Area.svelte';
     import FileUpload from '$lib/components/FileUpload.svelte';
     import PostBody from '$lib/components/PostBody.svelte';
     import Button from '$lib/components/Button.svelte';
 
-    import { handleSubmit, formatPost } from '$lib/util.js';;
+    import { handleSubmit, formatPost } from '$lib/util.js';
 
     /** @type {import('./$types').ActionData} */
     export let form;
 
     let uploadForm = {};
 
-    let formContent = '';
+    let formContent = $page.url.searchParams.get('init') || '';
     let formBody;
 
     let currentState = 'editor';
@@ -48,8 +50,7 @@
             method='POST' 
             on:submit|preventDefault={async e => form = JSON.parse(await handleSubmit(e)) }
         >
-            <textarea name='content' style='display: none;' value={formContent}></textarea
-        </form>
+            <textarea name='content' style='display: none;' value={formContent}></textarea>
             <input formaction="?/create" type='submit' value='Post'  bind:this={formBody} style='display: none;'>
             {#if currentState == 'editor'}
                 <p>
@@ -60,6 +61,7 @@
             {:else}
                 <FileUpload bind:form={uploadForm} />
             {/if}
+        </form>
     </div>
     <span slot="footer">
         <div class='wrapper'>

@@ -18,7 +18,7 @@ import { open } from 'sqlite'
 import { hash, compare } from 'bcrypt'
 import { randomBytes, createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
-import { calcVote, checkLength, checkRegex, safePath } from '../util.js';
+import { calcVote, checkLength, checkRegex, safePath, formatPost } from '../util.js';
 
 var db;
 async function initDb() {
@@ -29,7 +29,7 @@ async function initDb() {
 
     await db.run('CREATE TABLE IF NOT EXISTS auth (username CHAR(64), password CHAR(1024))');
     await db.run('CREATE TABLE IF NOT EXISTS token (username CHAR(64), token CHAR(1024))');
-    await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL)');
+    await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL, reply CHAR(64))');
     await db.run('CREATE TABLE IF NOT EXISTS vote (id CHAR(64), username CHAR(64), type INTEGER)');  
     await db.run('CREATE TABLE IF NOT EXISTS user (username CHAR(64), followers INTEGER, following INTEGER, upvotes INTEGER, downvotes INTEGER, reputation REAL)'); 
     await db.run('CREATE TABLE IF NOT EXISTS bio (username CHAR(64), content CHAR(10240), roles INTEGER)');  
@@ -149,11 +149,18 @@ backend.postCreate = async ({content, user}) => {
 
     var id = randomBytes(10).toString('hex');
 
-    await db.run('INSERT INTO post (username, id, content, rating) VALUES (?, ?, ?, ?)', [
+    var postFlatten = formatPost(content).flat();
+    var reply = postFlatten[postFlatten.findIndex(x => x.subtype == 'post')];
+
+    if (reply)
+        reply = reply.url.split('/').pop();
+
+    await db.run('INSERT INTO post (username, id, content, rating, reply) VALUES (?, ?, ?, ?, ?)', [
         user,
         id,
         content,
-        calcVote(0,0)
+        calcVote(0,0),
+        reply || ''
     ])
 
     return {'success': 'Your post has been broadcasted!', 'href': `/post/${id}` };
@@ -206,7 +213,16 @@ backend.postBulk = async ({page, id, user, cookies}) => {
     } else if (id) {
         posts = await db.all('SELECT * from post WHERE id = ?', [
             id
-        ])
+        ]);
+
+        if (posts.length == 0) posts.push({});
+
+        posts.push(...(await db.all('SELECT * from post WHERE reply = ? ORDER BY rating DESC LIMIT ?, ?', [
+            id,
+            page*ROW_COUNT,
+            ROW_COUNT
+        ])))
+
     } else {
         posts = await db.all('SELECT * from post WHERE username = ? ORDER BY rating DESC LIMIT ?, ?', [
             user,
