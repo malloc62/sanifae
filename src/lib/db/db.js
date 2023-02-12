@@ -14,7 +14,7 @@ const LEGAL_SORTS = [
 
 const FILE_SIZE_LIMIT = 1024*1024*16;
 
-const VALID_EXTENSIONS = ['png','jpg','jpeg','gif','svg']
+const VALID_EXTENSIONS = ['png','jpg','jpeg','gif','svg', 'mp4'];
 
 var ridArray = {};
 
@@ -325,13 +325,12 @@ backend.fileCreate = async({img, extension,id, last }) => {
     const extensionSafe = safePath(extension);
 
     if (VALID_EXTENSIONS.indexOf(extensionSafe) == -1)
-        return { success: 'Illegal file extension.' };
+        return { success: 'Illegal file extension. Permitted file extensions are: ' + VALID_EXTENSIONS.join(', ') };
 
     writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,imgData,{encoding: 'base64'});
 
     return { success: 'Successfully uploaded file.', 'href': `/img/${imgHash}.${extensionSafe}`};
 }
-
 export {
     backendProxy,
     backend

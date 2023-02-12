@@ -1,10 +1,10 @@
 <style>
-    img {
+    img, video {
         max-width: 100px;
         margin: 5px;
     }
 
-    img.only-img {
+    .only-img {
         max-width: 450px;
     }
 
@@ -34,9 +34,19 @@
                     {:else}
                         <img src={elem.url} alt='Image preview'>
                     {/if}
+                {:else if elem.type == 'video'}
+                    {#if line.filter(x => x.type == 'video').length < 2}
+                        <video class='only-img' alt='Video preview' controls>
+                            <source src={elem.url}>
+                        </video>
+                    {:else}
+                        <video alt='Video preview' controls>
+                            <source src={elem.url}>
+                        </video>
+                    {/if}
                 {:else if elem.type == 'link'}
                     <a href={elem.url}>{elem.display + ' '}</a>
-                {:else}
+                {:else if !elem.type}
                     {elem + ' '}
                 {/if}
             {/each}

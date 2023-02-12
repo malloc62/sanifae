@@ -1,3 +1,12 @@
+const EXTENSION_MAP = {
+    'png': 'img',
+    'jpg': 'img',
+    'jpeg': 'img',
+    'gif': 'img',
+    'svg': 'img', 
+    'mp4': 'video'
+}
+
 let checkLength = function(string, field, lowerBound, upperBound) {
     if (string.length < lowerBound) {
         if (string.length == 0) {
@@ -74,8 +83,12 @@ let formatPost = function(post) {
     
                 if (cap1 == 'img') {
                     var matchCleaned = safePath(splitPost[1]);
-                    splitPost = {'type': 'img', 'url': `/img/${matchCleaned}`};
-    
+                    var extension = matchCleaned.split('.').pop().toLowerCase();
+
+                    extension = safeName(extension);
+
+                    splitPost = {'type': EXTENSION_MAP[extension] || 'none', 'url': `/img/${matchCleaned}`};
+
                     return splitPost;
                 }
             } else if (subPost[0] == '@' || subPost[0] == '#') {
@@ -86,11 +99,27 @@ let formatPost = function(post) {
                 splitPost = {'type': 'link', 'display': subPost, 'subtype': type, 'url': `/${type}/${subPostIn}`};
 
                 return splitPost;
+            } else if (subPost.startsWith('https://')) {
+                var url;
+                var extension = subPost.split('.').pop().toLowerCase();
+
+                if (EXTENSION_MAP[extension]) {
+                    url = `/embed?url=${encodeURIComponent(subPost)}`;
+                    splitPost = [
+                        {'type': 'link', 'display': subPost, 'url': url},
+                        {'type': EXTENSION_MAP[extension] || 'link', 'display': subPost, 'url': url}
+                    ];
+                } else {
+                    url = subPost;
+                    splitPost = {'type': EXTENSION_MAP[extension] || 'link', 'display': subPost, 'url': url};
+                }
+
+                return splitPost;
             }
 
             return subPost;
         })
-        return line;
+        return line.flat();
     });
 
     return post;
