@@ -82,5 +82,11 @@
         <p>
             <b>img||filename.blah</b> embeds a user-uploaded file in this site
         </p>
+        <p>
+            <b>@user</b> mentions a user
+        </p>
+        <p>
+            <b>#post</b> replies to a post by ID
+        </p>
     </span>
 </Area>

@@ -63,19 +63,40 @@ let formatPost = function(post) {
     post = post.split('\n');
 
     post = post.map(subPost => {
-        var splitPost = subPost.split('||');
+        return subPost.split(' ');
+    });
 
-        if (splitPost.length > 1) {
-            var cap1 = splitPost[0];
+    post = post.map(line => {
+        line = line.map(subPost => {
+            var splitPost = subPost.split('||');
 
-            if (cap1 == 'img') {
-                var matchCleaned = splitPost[1].replace(/(\s+)/g, '\\$1');
-                splitPost = {'type': 'img', 'url': `/img/${matchCleaned}`};
+            if (splitPost.length > 1) {
+                var cap1 = splitPost[0];
+    
+                if (cap1 == 'img') {
+                    var matchCleaned = splitPost[1].replace(/(\s+)/g, '\\$1');
+                    splitPost = {'type': 'img', 'url': `/img/${matchCleaned}`};
+    
+                    return splitPost;
+                }
+            } else if (subPost[0] == '@') {
+                var subPostIn = subPost.substring(0).replaceAll(/[^A-Za-z0-9\-\_]/g, '');
+
+                splitPost = {'type': 'link', 'display': subPost, 'url': `/user/${subPostIn}`};
+
+                return splitPost;
+
+            } else if (subPost[0] == '#') {
+                var subPostIn = subPost.substring(0).replaceAll(/[^A-Za-z0-9]/g, '');
+
+                splitPost = {'type': 'link', 'display': subPost, 'url': `/post/${subPostIn}`};
 
                 return splitPost;
             }
-        }
-        return subPost;
+
+            return subPost;
+        })
+        return line;
     });
 
     return post;

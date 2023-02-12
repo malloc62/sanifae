@@ -29,7 +29,8 @@ async function initDb() {
     await db.run('CREATE TABLE IF NOT EXISTS token (username CHAR(64), token CHAR(1024))');
     await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL)');
     await db.run('CREATE TABLE IF NOT EXISTS vote (id CHAR(64), username CHAR(64), type INTEGER)');  
-    await db.run('CREATE TABLE IF NOT EXISTS user (username CHAR(64), followers INTEGER, following INTEGER, upvotes INTEGER, downvotes INTEGER, reputation REAL)');  
+    await db.run('CREATE TABLE IF NOT EXISTS user (username CHAR(64), followers INTEGER, following INTEGER, upvotes INTEGER, downvotes INTEGER, reputation REAL)'); 
+    await db.run('CREATE TABLE IF NOT EXISTS bio (username CHAR(64), content CHAR(10240), roles INTEGER)');  
 }
 
 let backendProxy = async ({route, backendParams}) => {
@@ -189,7 +190,19 @@ backend.userGet = async ({user}) => {
     ])
 
     if (!posts || posts.length < 1) {
-        return {'success': 'Post does not exist.'}
+        return {'success': 'User does not exist.'}
+    }
+
+    return {data: posts[0]};
+}
+
+backend.userBio = async ({user}) => {
+    var posts = await db.all('SELECT * from bio WHERE username = ?', [
+        user
+    ])
+
+    if (!posts || posts.length < 1) {
+        return {'success': 'Bio does not exist.'}
     }
 
     return {data: posts[0]};

@@ -14,7 +14,7 @@ export async function load({ fetch, params, url }) {
     const postJson = await res.json();
 
     const resUser = await fetch(`/api/userGet?user=${user}`);
-    const postJsonUser = await resUser.json();
+    const postJsonUser = (await resUser.json()) || {};
 
     return { postJson, id, postJsonUser };
 }
