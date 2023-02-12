@@ -41,7 +41,6 @@
             fData.append('last',i == (images.length - 1));
             fData.append('id',rId);
 
-            method: 'POST',
             form = await fetch(`/api/fileCreate`, {
                 method: 'POST',
                 body: fData,

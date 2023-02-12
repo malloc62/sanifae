@@ -3,7 +3,12 @@
     import PostButton from '$lib/components/PostButton.svelte';
     import PostBody from '$lib/components/PostBody.svelte';
 
-    export let success, username, content, upvotes, downvotes, id, isAuthor;
+    export let success, username, content, upvotes, downvotes, id, isAuthor, time;
+
+    let date = 'Time unknown';
+
+    if (time)
+        date = new Date(time / 1000);
 
     let query = (id) ? `/post/${id}` : '';
 
@@ -53,6 +58,12 @@
     img {
         max-width: 250px;
     }
+
+    .date {
+        font-size: 0.8rem;
+        font-style: italic;
+        font-weight: normal;
+    }
 </style>
 
 {#if success}
@@ -73,6 +84,9 @@
             <a href='/user/{username}'>
                 {username}
             </a>
+            <span class='date'>
+                {date}
+            </span>
         </span>
         <span slot="main">
             <PostBody content={content} />

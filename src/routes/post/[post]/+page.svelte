@@ -17,6 +17,7 @@
         downvotes={firstEntry.downvotes}
         id={firstEntry.id}
         isAuthor={firstEntry.isAuthor}
+        time={firstEntry.time}
     ></Post>
 {/if}
 

@@ -7,6 +7,11 @@ const AUTH_ACTIONS = [
     'postDelete'
 ];
 
+const LEGAL_SORTS = [
+    'time',
+    'rating'
+]
+
 const FILE_SIZE_LIMIT = 1024*1024*16;
 
 const VALID_EXTENSIONS = ['png','jpg','jpeg','gif','svg']
@@ -29,7 +34,7 @@ async function initDb() {
 
     await db.run('CREATE TABLE IF NOT EXISTS auth (username CHAR(64), password CHAR(1024))');
     await db.run('CREATE TABLE IF NOT EXISTS token (username CHAR(64), token CHAR(1024))');
-    await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL, reply CHAR(64))');
+    await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL, reply CHAR(64), time INTEGER)');
     await db.run('CREATE TABLE IF NOT EXISTS vote (id CHAR(64), username CHAR(64), type INTEGER)');  
     await db.run('CREATE TABLE IF NOT EXISTS user (username CHAR(64), followers INTEGER, following INTEGER, upvotes INTEGER, downvotes INTEGER, reputation REAL)'); 
     await db.run('CREATE TABLE IF NOT EXISTS bio (username CHAR(64), content CHAR(10240), roles INTEGER)');  
@@ -155,12 +160,13 @@ backend.postCreate = async ({content, user}) => {
     if (reply)
         reply = reply.url.split('/').pop();
 
-    await db.run('INSERT INTO post (username, id, content, rating, reply) VALUES (?, ?, ?, ?, ?)', [
+    await db.run('INSERT INTO post (username, id, content, rating, reply, time) VALUES (?, ?, ?, ?, ?, ?)', [
         user,
         id,
         content,
         calcVote(0,0),
-        reply || ''
+        reply || '',
+        Math.floor(new Date() * 1000)
     ])
 
     return {'success': 'Your post has been broadcasted!', 'href': `/post/${id}` };
@@ -200,13 +206,15 @@ backend.userBio = async ({user}) => {
     return {data: posts[0]};
 }
 
-backend.postBulk = async ({page, id, user, cookies}) => {
+backend.postBulk = async ({page, id, user, cookies, sort}) => {
     var posts;
 
     var userAuth = (await backend.token({cookies})).data;
 
+    sort = (LEGAL_SORTS.indexOf(sort) == -1) ? 'rating' : sort;
+
     if (!user && !id) {
-        posts = await db.all('SELECT * from post ORDER BY rating DESC LIMIT ?, ?', [
+        posts = await db.all('SELECT * from post ORDER BY '+sort+' DESC LIMIT ?, ?', [
             page*ROW_COUNT,
             ROW_COUNT
         ])
@@ -217,14 +225,14 @@ backend.postBulk = async ({page, id, user, cookies}) => {
 
         if (posts.length == 0) posts.push({});
 
-        posts.push(...(await db.all('SELECT * from post WHERE reply = ? ORDER BY rating DESC LIMIT ?, ?', [
+        posts.push(...(await db.all('SELECT * from post WHERE reply = ? ORDER BY '+sort+' DESC LIMIT ?, ?', [
             id,
             page*ROW_COUNT,
             ROW_COUNT
         ])))
 
     } else {
-        posts = await db.all('SELECT * from post WHERE username = ? ORDER BY rating DESC LIMIT ?, ?', [
+        posts = await db.all('SELECT * from post WHERE username = ? ORDER BY '+sort+' DESC LIMIT ?, ?', [
             user,
             page*ROW_COUNT,
             ROW_COUNT

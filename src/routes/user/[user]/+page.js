@@ -3,6 +3,7 @@ export async function load({ fetch, params, url }) {
     var search = url.searchParams;
 
     var voteType = search.get('vote');
+    var sort = search.get('sort');
 
     var id = search.get('page') * 1;
 
@@ -10,7 +11,7 @@ export async function load({ fetch, params, url }) {
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const res = await fetch(`/api/postBulk?user=${user}&page=${id}`);
+    const res = await fetch(`/api/postBulk?user=${user}&page=${id}&sort=${sort}`);
     const postJson = await res.json();
 
     const resUser = await fetch(`/api/userGet?user=${user}`);

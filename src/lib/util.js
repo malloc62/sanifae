@@ -105,6 +105,13 @@ let safePath = function(path) {
     return path.replace(/[\/]+/g, '')
 }
 
+let setLocation = function(location, key, value) {
+    var loc = new URL(location).searchParams;
+
+    loc.set(key,value);
+    return loc.toString();
+}
+
 export {
     checkLength,
     checkRegex,
@@ -112,5 +119,6 @@ export {
     handleSubmit,
     formatPost,
     block,
-    safePath
+    safePath,
+    setLocation
 };
