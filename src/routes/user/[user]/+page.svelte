@@ -7,6 +7,7 @@
     export let data;
 
     let userData = data.postJsonUser.data;
+    let userBio = data.postJsonUserBio.data;
 </script>
 
 {#if userData}
@@ -26,6 +27,9 @@
             <p>
                 <b>Downvotes:</b> {userData.downvotes}
             </p>
+            {#if userBio && userBio.roles == 69} 
+                <p><b>This user is an Owner.</b></p>
+            {/if}
         </span>
         <span slot="footer">
             

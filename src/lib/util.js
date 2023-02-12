@@ -39,7 +39,7 @@ let calcVote = function(up,down, type) {
         rating = Math.round(rating * Math.log(totalPadded) * 10);
     }
 
-    return rating * Math.log(totalPadded);
+    return rating;
 }
 
 let handleSubmit = async e => {
