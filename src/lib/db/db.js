@@ -248,6 +248,13 @@ backend.postBulk = async ({page, id, user, cookies, sort}) => {
 
 backend.vote = async ({id, vote, user}) => {
     if (!id || (vote != 'down' && vote != 'up')) return {success: 'fail' };
+    
+    var isCreator = (await db.all('SELECT * from post WHERE id = ?', [
+        id
+    ]))[0].username == user;
+
+    if (isCreator)
+        return {success: 'fail' };
 
     await db.run('DELETE FROM vote WHERE username = ? AND id = ?', [
         user,
