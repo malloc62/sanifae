@@ -28,6 +28,12 @@
     }
 </script>
 
+<style>
+    .follower {
+        margin-right: 1.5rem;
+    }
+</style>
+
 {#if userData}
     <Area>
         <span slot="header">
@@ -51,12 +57,12 @@
 
             <h2>Following</h2>
             {#each following as user}
-                <a href='/user/{user}'>{user.following} </a>
+                <a class='follower' href='/user/{user}'>{user.following}</a>
             {/each}
 
             <h2>Followers</h2>
             {#each followers as user}
-                <a href='/user/{user}'>{user.username} </a>
+                <a class='follower' href='/user/{user}'>{user.username}</a>
             {/each}
         </span>
         <span slot="footer">
