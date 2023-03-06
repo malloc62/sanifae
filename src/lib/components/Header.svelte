@@ -41,7 +41,7 @@
         <img src='/icon_sanifae.svg' alt='Sanifae Logo'>
     </a>
     {#if data.username && data.username != 'false'}
-        <a href='/user/{data.username}'>
+        <a href='/users/{data.username}'>
             {data.username}
         </a>
         <a href='/logout'>

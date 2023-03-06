@@ -73,14 +73,14 @@
 
             <h2>Following</h2>
             {#each following as user}
-                <a class='follower' href='/user/{user.following}'>
+                <a class='follower' href='/users/{user.following}'>
                     <img class='pfp' src='/pfp/{user.following}.png'/> 
                 </a>
             {/each}
 
             <h2>Followers</h2>
             {#each followers as user}
-                <a class='follower' href='/user/{user.username}'>
+                <a class='follower' href='/users/{user.username}'>
                     <img class='pfp' src='/pfp/{user.username}.png'/>    
                 </a>
             {/each}
