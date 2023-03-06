@@ -4,7 +4,8 @@ const AUTH_ACTIONS = [
     'postCreate',
     'fileCreate',
     'vote',
-    'postDelete'
+    'postDelete',
+    'follow'
 ];
 
 const LEGAL_SORTS = [
@@ -37,7 +38,8 @@ async function initDb() {
     await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL, reply CHAR(64), time INTEGER)');
     await db.run('CREATE TABLE IF NOT EXISTS vote (id CHAR(64), username CHAR(64), type INTEGER)');  
     await db.run('CREATE TABLE IF NOT EXISTS user (username CHAR(64), followers INTEGER, following INTEGER, upvotes INTEGER, downvotes INTEGER, reputation REAL)'); 
-    await db.run('CREATE TABLE IF NOT EXISTS bio (username CHAR(64), content CHAR(10240), roles INTEGER)');  
+    await db.run('CREATE TABLE IF NOT EXISTS bio (username CHAR(64), content CHAR(10240), roles INTEGER)');
+    await db.run('CREATE TABLE IF NOT EXISTS follow (username CHAR(64), following CHAR(64))');  
 }
 
 let backendProxy = async ({route, backendParams}) => {
@@ -107,7 +109,7 @@ backend.register = async ({user, pass, pass2}) => {
         passHash
     ])
 
-    await updateUser({user: user[0].username});
+    await updateUser({user: user});
 
     return { success: 'Successfully created account.', location: '/'};
 }
@@ -191,7 +193,19 @@ backend.userGet = async ({user}) => {
         return {'success': 'User does not exist.'}
     }
 
-    return {data: posts[0]};
+    var following = await db.all('SELECT * from follow WHERE username = ?', [
+        user
+    ]);
+
+    var followers = await db.all('SELECT * from follow WHERE following = ?', [
+        user
+    ]);
+
+    if (!following) following = [];
+
+    if (!followers) followers = [];
+
+    return {data: posts[0], following, followers};
 }
 
 backend.userBio = async ({user}) => {
@@ -305,6 +319,35 @@ backend.token = async ({cookies}) => {
 
     return {data: existingAccounts[0].username};
 }
+
+backend.follow = async ({target, user}) => {
+    var isFollowing = await db.all('SELECT * FROM follow WHERE username = ? AND following = ?',[
+        user,
+        target
+    ]);
+
+    if (isFollowing && isFollowing.length > 0) {
+        await db.run('DELETE FROM follow WHERE username = ? AND following = ?',[
+            user,
+            target
+        ]);
+    } else {
+        await db.run('INSERT INTO follow (username, following) VALUES (?, ?)',[
+            user,
+            target
+        ]);
+    }
+
+    var following = await db.all('SELECT * from follow WHERE username = ?', [
+        target
+    ]);
+
+    var followers = await db.all('SELECT * from follow WHERE following = ?', [
+        target
+    ]);
+
+    return {'success': 'User followed/unfollowed.', 'data': {following, followers}};
+};
 
 backend.fileCreate = async({img, extension,id, last }) => {
     if (ridArray[id] !== '' && !(ridArray[id])) {

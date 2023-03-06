@@ -8,6 +8,24 @@
 
     let userData = data.postJsonUser.data;
     let userBio = data.postJsonUserBio.data;
+
+    let following = data.postJsonUser.following;
+    let followers = data.postJsonUser.followers;
+
+    function follow() {
+        let fData = (new FormData());
+
+        fData.append('target',userData.username);
+
+        fetch('/api/follow', {
+            method: 'POST',
+            body: fData
+        }).then(async x => {
+            let xJson = (await x.json()).data;
+            following = xJson.following;
+            followers = xJson.followers;
+        })
+    }
 </script>
 
 {#if userData}
@@ -30,9 +48,21 @@
             {#if userBio && userBio.roles == 69} 
                 <p><b>This user is an Owner.</b></p>
             {/if}
+
+            <h2>Following</h2>
+            {#each following as user}
+                <a href='/user/{user}'>{user.following} </a>
+            {/each}
+
+            <h2>Followers</h2>
+            {#each followers as user}
+                <a href='/user/{user}'>{user.username} </a>
+            {/each}
         </span>
         <span slot="footer">
-            
+            <Button clickFunc={follow}>
+                Follow
+            </Button>
         </span>
     </Area>
 {:else}

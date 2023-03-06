@@ -27,6 +27,8 @@
 {/if}
 
 <p>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)-1)) }}>Previous page</Button>
+    {#if data.id > 0}
+        <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)-1)) }}>Previous page</Button>
+    {/if}
     <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)+1)) }}>Next page</Button>
 </p>
