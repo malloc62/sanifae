@@ -44,7 +44,7 @@
 
     #header {
         display: flex;
-        align-content: center;
+        align-items: center;
     }
 </style>
 

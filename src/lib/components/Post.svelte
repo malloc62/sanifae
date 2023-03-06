@@ -46,6 +46,10 @@
 </script>
 
 <style>
+    #header {
+        display: flex;
+        align-items: center;
+    }
     
     .votes {
         font-weight: bold;
@@ -59,7 +63,14 @@
         max-width: 250px;
     }
 
+    .pfp {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+    }
+
     .date {
+        margin-left: 1rem;
         font-size: 0.8rem;
         font-style: italic;
         font-weight: normal;
@@ -80,8 +91,9 @@
     </Area>
 {:else}
     <Area>
-        <span slot="header">
-            <a href='/user/{username}'>
+        <span slot="header" id='header'>
+            <img class='pfp' src='/pfp/{username}.png'/>
+            <a href='/users/{username}'>
                 {username}
             </a>
             <span class='date'>
