@@ -1,7 +1,7 @@
 <script>
     import Button from '$lib/components/Button.svelte';
 
-    export let form;
+    export let form, apiUrl, type;
 
     let fileInput;
     let files;
@@ -41,7 +41,7 @@
             fData.append('last',i == (images.length - 1));
             fData.append('id',rId);
 
-            form = await fetch(`/api/fileCreate`, {
+            form = await fetch(apiUrl || `/api/fileCreate`, {
                 method: 'POST',
                 body: fData,
             }).then(x => x.json());
@@ -62,9 +62,13 @@
     img {
         max-width: 250px;
     }
+
+    .small img {
+        max-width: 50px;
+    }
 </style>
 
-<form action='#' method='GET' >
+<form action='#' method='GET' class='{type || ''}' >
     {#if preview}
         <img src={preview} alt="Image preview"/>
     {:else}

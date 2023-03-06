@@ -20,5 +20,8 @@ export async function load({ fetch, params, url }) {
     const resUserBio = await fetch(`/api/userBio?user=${user}`);
     const postJsonUserBio = (await resUserBio.json()) || {};
 
-    return { postJson, id, postJsonUser, postJsonUserBio, user };
+    const resAccData = await fetch(`/api/token`);
+    const resAcc = (await resAccData.json()) || {};
+
+    return { resAcc, postJson, id, postJsonUser, postJsonUserBio, user };
 }

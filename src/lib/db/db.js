@@ -5,6 +5,7 @@ const AUTH_ACTIONS = [
     'fileCreate',
     'vote',
     'postDelete',
+    'pfp',
     'follow'
 ];
 
@@ -349,39 +350,54 @@ backend.follow = async ({target, user}) => {
     return {'success': 'User followed/unfollowed.', 'data': {following, followers}};
 };
 
-backend.fileCreate = async({img, extension,id, last }) => {
-    if (ridArray[id] !== '' && !(ridArray[id])) {
-        ridArray[id] = img;
-    } else {
-        ridArray[id] += img;
-    }
+let fileCreate = (type) => {
+    return async ({img, extension,id, last, user }) => {
+        let validExtensions = VALID_EXTENSIONS;
 
-    const imgData = ridArray[id];
+        if (type == 'pfp') validExtensions = ['png'];
 
-    if (last != 'true') {
-        return {'success': 'Image still proccessing...'}
-    } else {
-        ridArray[id] = false;
-    }
+        if (ridArray[id] !== '' && !(ridArray[id])) {
+            ridArray[id] = img;
+        } else {
+            ridArray[id] += img;
+        }
+    
+        const imgData = ridArray[id];
+    
+        if (last != 'true') {
+            return {'success': 'Image still proccessing...'}
+        } else {
+            ridArray[id] = false;
+        }
+    
+        const imgHash = createHash('md5').update(imgData).digest('hex');
+    
+        if (!imgHash)
+            return {'success': 'Image not provided.'}
+    
+        if (imgHash.length > FILE_SIZE_LIMIT)
+            return {'success': 'Image too big.'}
+    
+        const extensionSafe = safePath(extension);
+    
+        if (validExtensions.indexOf(extensionSafe) == -1)
+            return { success: 'Illegal file extension. Permitted file extensions are: ' + validExtensions.join(', ') };
+    
+        if (type == 'post') {
+            writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,imgData,{encoding: 'base64'});
+        } else {
+            writeFile(`${process.cwd()}/db/pfp-${user}.png`,imgData,{encoding: 'base64'});
+        }
+    
+        return { success: 'Successfully uploaded file.', 'href': `/img/${imgHash}.${extensionSafe}`};
+    }    
+} 
+backend.fileCreate = fileCreate('post');
+backend.pfp = fileCreate('pfp');
 
-    const imgHash = createHash('md5').update(imgData).digest('hex');
 
-    if (!imgHash)
-        return {'success': 'Image not provided.'}
-
-    if (imgHash.length > FILE_SIZE_LIMIT)
-        return {'success': 'Image too big.'}
-
-    const extensionSafe = safePath(extension);
-
-    if (VALID_EXTENSIONS.indexOf(extensionSafe) == -1)
-        return { success: 'Illegal file extension. Permitted file extensions are: ' + VALID_EXTENSIONS.join(', ') };
-
-    writeFile(`${process.cwd()}/db/post-${imgHash}.${extensionSafe}`,imgData,{encoding: 'base64'});
-
-    return { success: 'Successfully uploaded file.', 'href': `/img/${imgHash}.${extensionSafe}`};
-}
 export {
     backendProxy,
-    backend
+    backend,
+    VALID_EXTENSIONS
 }

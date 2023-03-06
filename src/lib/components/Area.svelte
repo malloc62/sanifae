@@ -30,6 +30,7 @@
     #header {
         border-bottom: var(--dark-2) solid 2px;
         width: calc(100% - 30px);
+
     }
 
     #main {
