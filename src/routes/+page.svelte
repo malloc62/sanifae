@@ -9,14 +9,7 @@
 
 <p>
     <Button clickFunc={() => { window.location.search = setLocation(window.location,'type',('all')) }}>All users</Button>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'type',('follow')) }}>Followers only</Button>
+    <Button clickFunc={() => { window.location.search = setLocation(window.location,'type',('follow')) }}>Following only</Button>
 </p>
 
 <PostList data={data} />
-
-<p>
-    {#if data.id > 0}
-        <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)-1)) }}>Previous page</Button>
-    {/if}
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)+1)) }}>Next page</Button>
-</p>

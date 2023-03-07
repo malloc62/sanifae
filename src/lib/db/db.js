@@ -253,13 +253,11 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}) => {
             ROW_COUNT
         ])
     } else if (type == 'follow') {
-        posts = await db.all('SELECT * from post WHERE username IN (SELECT username from follow WHERE username = ?) ORDER BY '+sort+' DESC LIMIT ?, ?', [
+        posts = await db.all('SELECT * from post WHERE username IN (SELECT following from follow WHERE username = ?) ORDER BY '+sort+' DESC LIMIT ?, ?', [
             userAuth,
             page*ROW_COUNT,
             ROW_COUNT
         ])
-
-        console.log(posts);
     }
 
     posts = posts.map(post => {
