@@ -9,7 +9,7 @@ export async function load({ fetch, params, url }) {
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const res = await fetch(`/api/postBulk?id=${id}&page=${page}&sort=${sort}`);
+    const res = await fetch(`/api/postBulk?id=${id}&page=${page}&sort=${sort}&type=post`);
     const postJson = (await res.json());
 
     return {postJson, id: page};

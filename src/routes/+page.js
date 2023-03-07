@@ -6,9 +6,11 @@ export async function load({ fetch, params, url }) {
 
     var sort =  search.get('sort') || 'rating';
 
+    var type = search.get('type') || 'all';
+
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const res = await fetch(`/api/postBulk?page=${id}&sort=${sort}`);
+    const res = await fetch(`/api/postBulk?page=${id}&sort=${sort}&type=${type}`);
     const postJson = await res.json();
 
     return { postJson, id };

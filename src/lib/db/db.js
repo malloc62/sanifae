@@ -221,19 +221,19 @@ backend.userBio = async ({user}) => {
     return {data: posts[0]};
 }
 
-backend.postBulk = async ({page, id, user, cookies, sort}) => {
+backend.postBulk = async ({page, id, user, cookies, sort, type}) => {
     var posts;
 
-    var userAuth = (await backend.token({cookies})).data;
+    var userAuth = (await backend.token({cookies})).data || '';
 
-    sort = (LEGAL_SORTS.indexOf(sort) == -1) ? 'rating' : sort;
+    sort = (LEGAL_SORTS.indexOf(sort + '') == -1) ? 'rating' : sort;
 
-    if (!user && !id) {
+    if (type == 'all') {
         posts = await db.all('SELECT * from post ORDER BY '+sort+' DESC LIMIT ?, ?', [
             page*ROW_COUNT,
             ROW_COUNT
         ])
-    } else if (id) {
+    } else if (type == 'post') {
         posts = await db.all('SELECT * from post WHERE id = ?', [
             id
         ]);
@@ -246,12 +246,20 @@ backend.postBulk = async ({page, id, user, cookies, sort}) => {
             ROW_COUNT
         ])))
 
-    } else {
+    } else if (type == 'user') {
         posts = await db.all('SELECT * from post WHERE username = ? ORDER BY '+sort+' DESC LIMIT ?, ?', [
             user,
             page*ROW_COUNT,
             ROW_COUNT
         ])
+    } else if (type == 'follow') {
+        posts = await db.all('SELECT * from post WHERE username IN (SELECT username from follow WHERE username = ?) ORDER BY '+sort+' DESC LIMIT ?, ?', [
+            userAuth,
+            page*ROW_COUNT,
+            ROW_COUNT
+        ])
+
+        console.log(posts);
     }
 
     posts = posts.map(post => {

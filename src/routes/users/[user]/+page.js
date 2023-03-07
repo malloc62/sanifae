@@ -11,7 +11,7 @@ export async function load({ fetch, params, url }) {
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const res = await fetch(`/api/postBulk?user=${user}&page=${id}&sort=${sort}`);
+    const res = await fetch(`/api/postBulk?user=${user}&page=${id}&sort=${sort}&type=user`);
     const postJson = await res.json();
 
     const resUser = await fetch(`/api/userGet?user=${user}`);
