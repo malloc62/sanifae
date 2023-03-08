@@ -9,10 +9,11 @@ const AUTH_ACTIONS = [
     'follow'
 ];
 
-const LEGAL_SORTS = [
-    'time',
-    'rating'
-]
+const LEGAL_SORTS = {
+    'time': 'time',
+    'rating': 'rating',
+    'hot': `rating / (%d - time + 24000)`
+}
 
 const FILE_SIZE_LIMIT = 1024*1024*16;
 
@@ -226,7 +227,12 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}) => {
 
     var userAuth = (await backend.token({cookies})).data || '';
 
-    sort = (LEGAL_SORTS.indexOf(sort + '') == -1) ? 'rating' : sort;
+    sort = (LEGAL_SORTS[sort]) || 'rating';
+
+    if (sort + '' != sort) sort = 'rating';
+
+    sort = sort.replaceAll('%d',Math.floor(new Date() * 1000));
+
 
     if (type == 'all') {
         posts = await db.all('SELECT * from post ORDER BY '+sort+' DESC LIMIT ?, ?', [

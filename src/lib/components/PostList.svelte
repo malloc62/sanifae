@@ -7,8 +7,9 @@
 </script>
 
 <p>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','rating')}}>Sort by rating</Button>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','time')}}>Sort by time</Button>
+    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','hot')}}>Hot</Button>
+    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','rating')}}>Top</Button>
+    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','time')}}>Recent</Button>
 </p>
 
 {#if data && data.postJson && data.postJson.data}

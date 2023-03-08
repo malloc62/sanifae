@@ -4,7 +4,7 @@ export async function load({ fetch, params, url }) {
 
     var id = search.get('page') * 1;
 
-    var sort =  search.get('sort') || 'rating';
+    var sort =  search.get('sort') || 'hot';
 
     var type = search.get('type') || 'all';
 
