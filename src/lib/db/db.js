@@ -53,7 +53,7 @@ async function initDb() {
 let backendProxy = async ({route, backendParams}) => {
     if (!db) await initDb();
 
-    var user = (await backend.token({cookies: backendParams.cookies})).data;
+    var user = ((await backend.token({cookies: backendParams.cookies})) || {}).data;
     
     if ((!user || user == '') && AUTH_ACTIONS.indexOf(route) != -1) return {'success': 'Not authorized.' };
 3
