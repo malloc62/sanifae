@@ -9,22 +9,10 @@
 
 <Area handleSubmit=''>
     <p slot="header">
-        Log in
+        Register
     </p>
 
     <span slot='main'>
-        <h2>Login</h2>
-        <form action='/api/login' on:submit|preventDefault={submitFunc} method='POST'>
-            <p>
-                Username: <input name='user'>
-            </p>
-            <p>
-                Password: <input type='password' name='pass'>
-            </p>
-            <p>
-                <input type='submit' value='Log in'>
-            </p>
-        </form>
         <h2>Register</h2>
         <form action='/api/register' on:submit|preventDefault={submitFunc} method='POST'>
             <p>

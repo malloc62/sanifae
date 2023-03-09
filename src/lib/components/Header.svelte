@@ -44,15 +44,18 @@
         <a href='/users/{data.username}'>
             {data.username}
         </a>
-        <a href='/logout'>
+        <a href='/account/logout'>
             Log out
         </a>
         <a href='/new_post'>
             Create
         </a>
     {:else}
-        <a href='/account'>
-            Log in / Register
+        <a href='/account/login'>
+            Log in
+        </a>
+        <a href='/account/register'>
+            Register
         </a>
     {/if}
 </div>
