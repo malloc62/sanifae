@@ -56,9 +56,9 @@ let backendProxy = async ({route, backendParams}) => {
     var user = (await backend.token({cookies: backendParams.cookies})).data;
     
     if ((!user || user == '') && AUTH_ACTIONS.indexOf(route) != -1) return {'success': 'Not authorized.' };
-
+3
     var isAdmin = false; 
-    if (user && user != '') isAdmin = (await userRoles(user)).indexOf('Admin') != -1;
+    if (user && user != '') isAdmin = (await userRoles({user})).indexOf('Admin') != -1;
 
     backendParams['admin'] = isAdmin;
 
@@ -204,9 +204,11 @@ backend.postDelete = async ({id, user, admin}) => {
 let userRoles = async ({user}) => {
     var rolesLocal = await db.all('SELECT roles from bio WHERE username = ?', [
         user
-    ]);
+    ] ) || [{}];
+    
+    let rolesLocalList = rolesLocal[0].roles;
 
-    return roles.filter((elem,i) => ((rolesLocal % (1<<(i+1))) > ((1<<i) - 1)) );
+    return roles.filter((elem,i) => ((rolesLocalList % (1<<(i+1))) > ((1<<i) - 1)) );
 };
 
 backend.userGet = async ({user}) => {
@@ -242,7 +244,7 @@ backend.userBio = async ({user}) => {
         return {'success': 'Bio does not exist.'}
     }
 
-    posts[0].rolesArr = (await userRoles(user)) || [];
+    posts[0].rolesArr = (await userRoles({user})) || [];
 
     return {data: posts[0]};
 }
