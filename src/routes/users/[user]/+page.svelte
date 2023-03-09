@@ -48,7 +48,7 @@
     }
 </style>
 
-{#if userData}
+{#if userData && userBio}
     <Area>
         <span slot="header" id='header'>
             <img class='pfp' src='/pfp/{userData.username}.png'/>
@@ -67,9 +67,12 @@
             <p>
                 <b>Downvotes:</b> {userData.downvotes}
             </p>
-            {#if userBio && userBio.roles == 69} 
-                <p><b>This user is an Owner.</b></p>
-            {/if}
+            <h2>Roles</h2>
+            <p>
+                {#each userBio.rolesArr as role} 
+                    <i class='follower'>{role}</i>
+                {/each}
+            </p>
 
             <h2>Following</h2>
             {#each following as user}

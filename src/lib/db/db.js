@@ -15,6 +15,12 @@ const LEGAL_SORTS = {
     'hot': `rating / (%d - time + 24000)`
 }
 
+const roles = [
+    'Owner',
+    'Admin',
+    'Veteran'
+]
+
 const FILE_SIZE_LIMIT = 1024*1024*16;
 
 const VALID_EXTENSIONS = ['png','jpg','jpeg','gif','svg', 'mp4'];
@@ -47,12 +53,16 @@ async function initDb() {
 let backendProxy = async ({route, backendParams}) => {
     if (!db) await initDb();
 
-    if (AUTH_ACTIONS.indexOf(route) != -1) {
-        var user = (await backend.token({cookies: backendParams.cookies})).data;
-        if (!user || user == '') return {'success': 'Not authorized.' };
+    var user = (await backend.token({cookies: backendParams.cookies})).data;
+    
+    if ((!user || user == '') && AUTH_ACTIONS.indexOf(route) != -1) return {'success': 'Not authorized.' };
 
-        backendParams['user'] = user;
-    }
+    var isAdmin = false; 
+    if (user && user != '') isAdmin = (await userRoles(user)).indexOf('Admin') != -1;
+
+    backendParams['admin'] = isAdmin;
+
+    if (AUTH_ACTIONS.indexOf(route) != -1)  backendParams['user'] = user;
 
     return backend[route](backendParams);
 }
@@ -176,15 +186,28 @@ backend.postCreate = async ({content, user}) => {
     return {'success': 'Your post has been broadcasted!', 'href': `/post/${id}` };
 }
 
-backend.postDelete = async ({id, user}) => {
-
-    await db.run('DELETE FROM post WHERE username = ? AND id = ?', [
-        user,
-        id
-    ])
+backend.postDelete = async ({id, user, admin}) => {
+    if (admin) {
+        await db.run('DELETE FROM post WHERE id = ?', [
+            id
+        ])
+    } else {
+        await db.run('DELETE FROM post WHERE username = ? AND id = ?', [
+            user,
+            id
+        ])
+    }
 
     return {'success': 'Your post has been deleted!', 'href': `/post/${id}` };
 }
+
+let userRoles = async ({user}) => {
+    var rolesLocal = await db.all('SELECT roles from bio WHERE username = ?', [
+        user
+    ]);
+
+    return roles.filter((elem,i) => ((rolesLocal % 1<<i) == 0));
+};
 
 backend.userGet = async ({user}) => {
     var posts = await db.all('SELECT * from user WHERE username = ?', [
@@ -219,10 +242,12 @@ backend.userBio = async ({user}) => {
         return {'success': 'Bio does not exist.'}
     }
 
+    posts[0].rolesArr = (await userRoles(user)) || [];
+
     return {data: posts[0]};
 }
 
-backend.postBulk = async ({page, id, user, cookies, sort, type}) => {
+backend.postBulk = async ({page, id, user, cookies, sort, type, admin}) => {
     var posts;
 
     var userAuth = (await backend.token({cookies})).data || '';
@@ -267,7 +292,7 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}) => {
     }
 
     posts = posts.map(post => {
-        return {...post, isAuthor: userAuth == post.username};
+        return {...post, isAuthor: userAuth == post.username || admin};
     })
 
     return {data: posts};
