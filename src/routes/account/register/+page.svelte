@@ -33,6 +33,6 @@
         {#if form?.success}
             <p>{form?.success}</p>
         {/if}
-        By using the Sanifae service, you agree to the <a href='https://insfa.net/rules'>Terms of Service</a>.
+        By using the Sanifae service, you agree to the <a href='/tos'>Terms of Service</a>.
     </p>
 </Area>

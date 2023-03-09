@@ -58,4 +58,7 @@
             Register
         </a>
     {/if}
+    <a href='/tos'>
+        Rulebook
+    </a>
 </div>
