@@ -206,7 +206,7 @@ let userRoles = async ({user}) => {
         user
     ]);
 
-    return roles.filter((elem,i) => ((rolesLocal % 1<<i) == 0));
+    return roles.filter((elem,i) => ((rolesLocal % 1<<i) == 1));
 };
 
 backend.userGet = async ({user}) => {
