@@ -48,7 +48,7 @@
     }
 </style>
 
-{#if userData && userBio}
+{#if userData}
     <Area>
         <span slot="header" id='header'>
             <img class='pfp' src='/pfp/{userData.username}.png'/>
@@ -69,9 +69,11 @@
             </p>
             <h2>Roles</h2>
             <p>
-                {#each userBio.rolesArr as role} 
-                    <i class='follower'>{role}</i>
-                {/each}
+                {#if userBio && userBio.rolesArr}
+                    {#each userBio.rolesArr as role} 
+                        <i class='follower'>{role}</i>
+                    {/each}
+                {/if}
             </p>
 
             <h2>Following</h2>
