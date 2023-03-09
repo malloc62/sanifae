@@ -3,7 +3,7 @@
         background: var(--light-2);
 
         height: 100vh;
-        width: calc(100vw - 50px);
+        width: 100vw;
         padding: 25px;
         padding-top: 0px;
 
@@ -11,7 +11,7 @@
         flex-direction: column;
         align-items: center;
 
-        overflow-y: scroll;
+        overflow-y: auto;
     }
     
     :global(:root) {
