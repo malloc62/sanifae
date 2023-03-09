@@ -58,7 +58,7 @@ let backendProxy = async ({route, backendParams}) => {
     if ((!user || user == '') && AUTH_ACTIONS.indexOf(route) != -1) return {'success': 'Not authorized.' };
 3
     var isAdmin = false; 
-    if (user && user != '') isAdmin = (await userRoles({user})).indexOf('Admin') != -1;
+    if (user && user != '') isAdmin = ((await userRoles({user})) || []).indexOf('Admin') != -1;
 
     backendParams['admin'] = isAdmin;
 
