@@ -204,7 +204,9 @@ backend.postDelete = async ({id, user, admin}) => {
 let userRoles = async ({user}) => {
     var rolesLocal = await db.all('SELECT roles from bio WHERE username = ?', [
         user
-    ] ) || [{}];
+    ] );
+
+    if (rolesLocal.length == 0) rolesLocal = [{}];
     
     let rolesLocalList = rolesLocal[0].roles;
 
