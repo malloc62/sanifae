@@ -95,11 +95,13 @@ let backendProxy = async ({route, backendParams}) => {
     let user = (await backend.token({cookies: backendParams.cookies},extraParams)) || {};
 
     user = user.data;
+
+    console.log(user);
     
     if ((!user || user == '') && AUTH_ACTIONS.indexOf(route) != -1) return {'success': 'Not authorized.' };
 3
     let isAdmin = false; 
-    if (user && user != '') isAdmin = ((await backend.userRoles({}, {user, db})) || []).indexOf('Admin') != -1;
+    if (user && user != '') isAdmin = ((await backend.userRoles({user}, {db})) || []).indexOf('Admin') != -1;
 
     extraParams['admin'] = isAdmin;
     extraParams['user'] = user;
