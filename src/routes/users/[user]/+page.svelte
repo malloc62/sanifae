@@ -60,6 +60,8 @@
 
     .sections div {
         text-align: right;
+        max-height: 300px;
+        overflow-y: auto;
     }
 
     .sections div:nth-child(1) {
@@ -111,18 +113,18 @@
 
             <div class='sections'>   
                 <div>           
-                <h2>{following.length} followers</h2>
+                <h2>{following.length} following</h2>
                     {#each following as user}
-                        <a class='follower' href='/users/{user.following}'>
+                        <a href='/users/{user.following}'>
                             <img class='pfp-small' src='/img/pfp/{user.following}.png'/> 
                         </a>
                     {/each}
                 </div>
 
                 <div>
-                    <h2>{followers.length} following</h2>
+                    <h2>{followers.length} followers</h2>
                     {#each followers as user}
-                        <a class='follower' href='/users/{user.username}'>
+                        <a href='/users/{user.username}'>
                             <img class='pfp-small' src='/img/pfp/{user.username}.png'/>    
                         </a>
                     {/each}

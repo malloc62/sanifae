@@ -59,6 +59,6 @@
         </a>
     {/if}
     <a href='/tos'>
-        Rulebook
+        Rules
     </a>
 </div>
