@@ -1,4 +1,5 @@
-import { backend, backendProxy } from '../../../lib/db/db.js';
+import { backend } from '../../../lib/db/handlers.js';
+import { backendProxy } from '../../../lib/db/db.js';
 
 
 /** @type {import('./$types').RequestHandler} */

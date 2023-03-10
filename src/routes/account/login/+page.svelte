@@ -8,9 +8,9 @@
 </script>
 
 <Area handleSubmit=''>
-    <p slot="header">
+    <span slot="header">
         Log in
-    </p>
+    </span>
 
     <span slot='main'>
         <h2>Login</h2>

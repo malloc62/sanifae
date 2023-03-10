@@ -55,8 +55,11 @@
         font-weight: bold;
         font-size: 1.5rem;
     }
-    .vote-area {
-        margin-right: 30px;
+    
+    
+    #header-area {
+        display: flex;
+        flex-direction: column;
     }
 
     img {
@@ -70,7 +73,6 @@
     }
 
     .date {
-        margin-left: 1rem;
         font-size: 0.8rem;
         font-style: italic;
         font-weight: normal;
@@ -93,12 +95,14 @@
     <Area>
         <span slot="header" id='header'>
             <img class='pfp' src='/pfp/{username}.png'/>
-            <a href='/users/{username}'>
-                {username}
-            </a>
-            <span class='date'>
-                {date}
-            </span>
+            <div class='header-area'>
+                <div><a href='/users/{username}'>
+                    {username}
+                </a></div>
+                <div class='date'>
+                    {date}
+                </div>
+            </div>
         </span>
         <span slot="main">
             <PostBody content={content} />

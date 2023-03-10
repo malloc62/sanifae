@@ -7,7 +7,7 @@
 
     #logo {
 
-        width: calc(100vw + 50px);
+        width: calc(100vw - 10px);
 
         background: var(--dark-1);
 

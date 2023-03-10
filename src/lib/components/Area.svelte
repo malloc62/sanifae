@@ -20,7 +20,8 @@
     #header {
         font-weight: bold;
         
-        font-size: 2rem;
+        font-size: 1rem;
+        overflow-x: auto;
 
         width: 100%;
 
