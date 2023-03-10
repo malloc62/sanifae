@@ -1,34 +1,15 @@
 <script>
-    import Area from '$lib/components/Area.svelte';
-    import { handleSubmit } from '$lib/util.js';
-
-    export let form = {};
-
-    let submitFunc = async e => form = JSON.parse(await handleSubmit(e))
+    import Form from '$lib/components/Form.svelte';
 </script>
 
-<Area handleSubmit=''>
-    <span slot="header">
-        Log in
-    </span>
-
-    <span slot='main'>
-        <h2>Login</h2>
-        <form action='/api/login' on:submit|preventDefault={submitFunc} method='POST'>
-            <p>
-                Username: <input name='user'>
-            </p>
-            <p>
-                Password: <input type='password' name='pass'>
-            </p>
-            <p>
-                <input type='submit' value='Log in'>
-            </p>
-        </form>
-    </span>
-    <p slot="footer">
-        {#if form?.success}
-            <p>{form?.success}</p>
-        {/if}
+<Form action='/api/login' name='Log in'>
+    <p>
+        <input name='user' placeholder='Username'>
     </p>
-</Area>
+    <p>
+        <input type='password' name='pass'  placeholder='Password'>
+    </p>
+    <p>
+        <input type='submit' value='Log in'>
+    </p>
+</Form>

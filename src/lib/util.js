@@ -87,7 +87,7 @@ let formatPost = function(post) {
 
                     extension = safeName(extension);
 
-                    splitPost = {'type': EXTENSION_MAP[extension] || 'none', 'url': `/img/${matchCleaned}`};
+                    splitPost = {'type': EXTENSION_MAP[extension] || 'none', 'url': `/img/file/${matchCleaned}`};
 
                     return splitPost;
                 }

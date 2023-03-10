@@ -34,7 +34,10 @@
     :global(input, textarea) {
         border: 0;
         border-radius: 0.2rem;
-        box-shadow: 0px 2px 2.5px 0px var(--dark-2);
+        box-shadow: 0px 0px 2px 2px var(--dark-2);
+
+        font-size: 1rem;
+        padding: 0.5rem;
     }
 
 </style>

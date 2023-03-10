@@ -1,38 +1,18 @@
 <script>
-    import Area from '$lib/components/Area.svelte';
-    import { handleSubmit } from '$lib/util.js';
-
-    export let form = {};
-
-    let submitFunc = async e => form = JSON.parse(await handleSubmit(e))
+    import Form from '$lib/components/Form.svelte';
 </script>
 
-<Area handleSubmit=''>
-    <span slot="header">
-        Register
-    </span>
-
-    <span slot='main'>
-        <h2>Register</h2>
-        <form action='/api/register' on:submit|preventDefault={submitFunc} method='POST'>
-            <p>
-                Username: <input name='user'>
-            </p>
-            <p>
-                Password: <input type='password' name='pass'>
-            </p>
-            <p>
-                Confirm Password: <input type='password' name='pass2'>
-            </p>
-            <p>
-                <input type='submit' value='Register'>
-            </p>
-        </form>
-    </span>
-    <p slot="footer">
-        {#if form?.success}
-            <p>{form?.success}</p>
-        {/if}
-        By using the Sanifae service, you agree to the <a href='/tos'>Terms of Service</a>.
+<Form action='/api/register' name='Register'>
+    <p>
+        <input name='user' placeholder='Username'>
     </p>
-</Area>
+    <p>
+        <input type='password' name='pass' placeholder='Password'>
+    </p>
+    <p>
+        <input type='password' name='pass2' placeholder='Password (confirm)'>
+    </p>
+    <p>
+        <input type='submit' value='Register'>
+    </p>
+</Form>

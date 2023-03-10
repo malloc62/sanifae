@@ -70,6 +70,7 @@
         width: 50px;
         height: 50px;
         margin-right: 10px;
+        border-radius: 100%;
     }
 
     .date {
@@ -94,7 +95,7 @@
 {:else}
     <Area>
         <span slot="header" id='header'>
-            <img class='pfp' src='/pfp/{username}.png'/>
+            <img class='pfp' src='/img/pfp/{username}.png'/>
             <div class='header-area'>
                 <div><a href='/users/{username}'>
                     {username}

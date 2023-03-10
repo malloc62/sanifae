@@ -84,9 +84,9 @@ let fileCreate = (type) => {
         if (validExtensions.indexOf(extensionSafe) == -1)
             return { success: 'Illegal file extension. Permitted file extensions are: ' + validExtensions.join(', ') };
     
-        let fileName = (type == 'post') ? `post-${imgHash}.${extensionSafe}` : `pfp-${user}.png`
+        let fileName = (type == 'post') ? `upload/${imgHash}.${extensionSafe}` : `pfp/${user}.png`
 
-        writeFile(`${process.cwd()}/db/${fileName}`,imgData,{encoding: 'base64'});
+        writeFile(`${process.cwd()}/db/files/${fileName}`,imgData,{encoding: 'base64'});
     
         return { success: 'Successfully uploaded file.', 'href': `/img/${imgHash}.${extensionSafe}`};
     }    
@@ -98,7 +98,7 @@ backend.fileCreate = fileCreate('post');
 backend.pfp = fileCreate('pfp');
 
 backend.userRoles = async ({user},{db}) => {
-    var rolesLocal = await db.all('SELECT roles from bio WHERE username = ?', [
+    var rolesLocal = await db.all('SELECT roles from user WHERE username = ?', [
         user
     ] );
 
@@ -135,7 +135,7 @@ backend.register = async ({user, pass, pass2},{db}) => {
         passHash
     ])
 
-    await updateUser({user: user});
+    await updateUser({user: user}, {db});
 
     return { success: 'Successfully created account.', location: '/'};
 }
@@ -236,21 +236,9 @@ backend.userGet = async ({user},{db}) => {
 
     if (!followers) followers = [];
 
-    return {data: posts[0], following, followers};
-}
+    posts[0].rolesArr = await backend.userRoles({user},{db});
 
-backend.userBio = async ({user},{db}) => {
-    var posts = await db.all('SELECT * from bio WHERE username = ?', [
-        user
-    ])
-
-    if (!posts || posts.length < 1) {
-        return {'success': 'Bio does not exist.'}
-    }
-
-    posts[0].rolesArr = (await userRoles({user})) || [];
-
-    return {data: posts[0]};
+    return {data: posts[0], following, followers };
 }
 
 backend.postBulk = async ({page, id, user, cookies, sort, type}, {admin, db}) => {
@@ -264,11 +252,14 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}, {admin, db}) =>
 
     sort = sort.replaceAll('%d',Math.floor(new Date() * 1000));
 
+    let pageParams = [
+        page*ROW_COUNT,
+        ROW_COUNT
+    ]
 
     if (type == 'all') {
         posts = await db.all('SELECT * from post ORDER BY '+sort+' DESC LIMIT ?, ?', [
-            page*ROW_COUNT,
-            ROW_COUNT
+            ...pageParams
         ])
     } else if (type == 'post') {
         posts = await db.all('SELECT * from post WHERE id = ?', [
@@ -279,21 +270,18 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}, {admin, db}) =>
 
         posts.push(...(await db.all('SELECT * from post WHERE reply = ? ORDER BY '+sort+' DESC LIMIT ?, ?', [
             id,
-            page*ROW_COUNT,
-            ROW_COUNT
+            ...pageParams
         ])))
 
     } else if (type == 'user') {
         posts = await db.all('SELECT * from post WHERE username = ? ORDER BY '+sort+' DESC LIMIT ?, ?', [
             user,
-            page*ROW_COUNT,
-            ROW_COUNT
+            ...pageParams
         ])
     } else if (type == 'follow') {
         posts = await db.all('SELECT * from post WHERE username IN (SELECT following from follow WHERE username = ?) ORDER BY '+sort+' DESC LIMIT ?, ?', [
             userAuth,
-            page*ROW_COUNT,
-            ROW_COUNT
+            ...pageParams
         ])
     }
 
@@ -346,7 +334,7 @@ backend.vote = async ({id, vote}, {user, db}) => {
     if (!user[0])
         return {success: 'fail' };
 
-    await updateUser({user: user[0].username});
+    await updateUser({user: user[0].username}, {db});
 
     return {data: {up,down}};
 }

@@ -10,7 +10,6 @@
     let uploadForm = {};
 
     let userData = data.postJsonUser.data;
-    let userBio = data.postJsonUserBio.data;
 
     let following = data.postJsonUser.following;
     let followers = data.postJsonUser.followers;
@@ -37,67 +36,106 @@
     }
 
     .pfp {
-        width: 50px;
-        height: 50px;
-        margin-right: 10px;
+        width: 100px;
+        height: 100px;
+        border-radius: 100%;
+    }
+
+    .pfp-small {
+        width: 45px;
+        height: 45px;
+        border-radius: 100%;
     }
 
     #header {
         display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .sections div {
+        text-align: right;
+    }
+
+    .sections div:nth-child(1) {
+        text-align: left;
+    }
+
+    .profile {
         align-items: center;
+        flex-direction: column;  
+        display: flex;
     }
 </style>
 
 {#if userData}
     <Area>
         <span slot="header" id='header'>
-            <img class='pfp' src='/pfp/{userData.username}.png'/>
-            <a href='/users/{userData.username}'>
-                {userData.username}
-            </a>
+            <div class='profile'>
+                <img class='pfp' src='/img/pfp/{userData.username}.png'/>
+                <a href='/users/{userData.username}'>
+                    {userData.username}
+                </a>
+            </div>
+            <div>
+                <Button clickFunc={follow}>
+                    Follow
+                </Button>
+            </div>
         </span>
         <span slot="main">
-            <div class='left'></div>
-            <p>
-                <b>Reputation:</b> {userData.reputation}
+            <p class='data'>
+                <span class='follower'>
+                    <b>{userData.reputation}</b> Reputation
+                </span>
+                <span class='follower'>
+                    <b>{userData.upvotes}</b> Upvotes
+                </span>
+                <span class='follower'>
+                    <b>{userData.downvotes}</b> Downvotes
+                </span>
             </p>
-            <p>
-                <b>Upvotes:</b> {userData.upvotes}
-            </p>
-            <p>
-                <b>Downvotes:</b> {userData.downvotes}
-            </p>
-            <h2>Roles</h2>
-            <p>
-                {#if userBio && userBio.rolesArr}
-                    {#each userBio.rolesArr as role} 
-                        <i class='follower'>{role}</i>
+
+            {#if userData.rolesArr}
+                <p>
+                    {#each userData.rolesArr as role} 
+                        <b class='follower'>{role}</b>
                     {/each}
-                {/if}
-            </p>
+                </p>
+            {/if}
 
-            <h2>Following</h2>
-            {#each following as user}
-                <a class='follower' href='/users/{user.following}'>
-                    <img class='pfp' src='/pfp/{user.following}.png'/> 
-                </a>
-            {/each}
+            <div class='sections'>   
+                <div>           
+                <h2>{following.length} followers</h2>
+                    {#each following as user}
+                        <a class='follower' href='/users/{user.following}'>
+                            <img class='pfp-small' src='/img/pfp/{user.following}.png'/> 
+                        </a>
+                    {/each}
+                </div>
 
-            <h2>Followers</h2>
-            {#each followers as user}
-                <a class='follower' href='/users/{user.username}'>
-                    <img class='pfp' src='/pfp/{user.username}.png'/>    
-                </a>
-            {/each}
+                <div>
+                    <h2>{followers.length} following</h2>
+                    {#each followers as user}
+                        <a class='follower' href='/users/{user.username}'>
+                            <img class='pfp-small' src='/img/pfp/{user.username}.png'/>    
+                        </a>
+                    {/each}
+                </div>
+            </div>
+
             {#if data.resAcc.data == userData.username}
                 <h2>Set PFP</h2>
                 <FileUpload bind:form={uploadForm} type='small' apiUrl={'/api/pfp'}/>
             {/if}
         </span>
         <span slot="footer">
-            <Button clickFunc={follow}>
-                Follow
-            </Button>
+
         </span>
     </Area>
 {:else}

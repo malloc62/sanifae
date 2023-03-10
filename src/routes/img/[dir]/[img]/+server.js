@@ -1,6 +1,11 @@
-import { VALID_EXTENSIONS } from '../../../lib/db/db.js';
+import { backend, backendProxy } from '../../../../lib/db/db.js';
 
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
+
+const FILE_DIRS = [
+    'upload',
+    'pfp'
+]
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url, cookies, params }) {
@@ -8,16 +13,18 @@ export async function GET({ url, cookies, params }) {
 
     imgName = imgName.replace(/(\s+)/g, '\\$1');
 
-    var res;
+    var dir = params['dir'];
 
-    var res = await readFile(`${process.cwd()}/db/pfp-${imgName}`);
+    if (FILE_DIRS.indexOf(dir) == -1) dir = FILE_DIRS[0];
+
+    var res = await readFile(`${process.cwd()}/db/files/${dir}/${imgName}`);
 
     var response = new Response(res);
     var extension = imgName.split('.').pop();
 
     if (extension == 'svg') {
         response = new Response(res, {'headers': {
-            'Content-Type':  'image/png'
+            'Content-Type':  'image/svg+xml'
         }});
     }
     return response;

@@ -1,4 +1,5 @@
 import { backend } from './handlers.js';
+import { mkdir, access } from 'node:fs/promises';
 
 const AUTH_ACTIONS = [
     'postCreate',
@@ -9,24 +10,79 @@ const AUTH_ACTIONS = [
     'follow'
 ];
 
+const FILE_DIRS = [
+    '/db',
+    '/db/files/upload',
+    '/db/files/pfp'
+]
+
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 
 var db;
 
+async function newDir(dir) {
+    await access(newDir)
+        .then(() => {})
+        .catch(async () => await mkdir(dir, { recursive: true }));
+}
+
+async function initFolders() {
+    for (var i = 0; i < FILE_DIRS.length; i++) {
+        await newDir( `${process.cwd()}/${FILE_DIRS[i]}`);
+    }
+}
+
 async function initDb() {
+    await initFolders();
+
     db = await open({
       filename: `${process.cwd()}/db/main.db`,
       driver: sqlite3.Database
     });
 
-    await db.run('CREATE TABLE IF NOT EXISTS auth (username CHAR(64), password CHAR(1024))');
-    await db.run('CREATE TABLE IF NOT EXISTS token (username CHAR(64), token CHAR(1024))');
-    await db.run('CREATE TABLE IF NOT EXISTS post (username CHAR(64), id CHAR(64), content CHAR(10240), upvotes INTEGER, downvotes INTEGER, rating REAL, reply CHAR(64), time INTEGER)');
-    await db.run('CREATE TABLE IF NOT EXISTS vote (id CHAR(64), username CHAR(64), type INTEGER)');  
-    await db.run('CREATE TABLE IF NOT EXISTS user (username CHAR(64), followers INTEGER, following INTEGER, upvotes INTEGER, downvotes INTEGER, reputation REAL)'); 
-    await db.run('CREATE TABLE IF NOT EXISTS bio (username CHAR(64), content CHAR(10240), roles INTEGER)');
-    await db.run('CREATE TABLE IF NOT EXISTS follow (username CHAR(64), following CHAR(64))');  
+    await db.run('CREATE TABLE IF NOT EXISTS auth ( \
+        username CHAR(64), \
+        password CHAR(1024) \
+    )');
+
+    await db.run('CREATE TABLE IF NOT EXISTS token ( \
+        username CHAR(64), \
+        token CHAR(1024) \
+    )');
+
+    await db.run('CREATE TABLE IF NOT EXISTS post ( \
+        username CHAR(64), \
+        id CHAR(64), \
+        content CHAR(10240), \
+        upvotes INTEGER, \
+        downvotes INTEGER, \
+        rating REAL, \
+        reply CHAR(64), \
+        time INTEGER \
+    )');
+
+    await db.run('CREATE TABLE IF NOT EXISTS vote ( \
+        id CHAR(64), \
+        username CHAR(64), \
+        type INTEGER \
+    )'); 
+
+    await db.run('CREATE TABLE IF NOT EXISTS user ( \
+        username CHAR(64), \
+        followers INTEGER, \
+        following INTEGER, \
+        upvotes INTEGER, \
+        downvotes INTEGER, \
+        reputation REAL, \
+        roles INTEGER, \
+        pinned CHAR(64) \
+    )'); 
+
+    await db.run('CREATE TABLE IF NOT EXISTS follow (\
+        username CHAR(64), \
+        following CHAR(64) \
+    )');  
 }
 
 let backendProxy = async ({route, backendParams}) => {
