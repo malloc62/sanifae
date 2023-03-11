@@ -17,7 +17,11 @@ export async function GET({ url, cookies, params }) {
 
     if (FILE_DIRS.indexOf(dir) == -1) dir = FILE_DIRS[0];
 
-    var res = await readFile(`${process.cwd()}/db/files/${dir}/${imgName}`);
+    var res;
+
+    res = await readFile(`${process.cwd()}/db/files/${dir}/${imgName}`).catch(() => {});
+
+    if (!res && dir == 'pfp') res = await readFile(`${process.cwd()}/static/pfp.png`);
 
     var response = new Response(res);
     var extension = imgName.split('.').pop();
