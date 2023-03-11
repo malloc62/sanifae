@@ -104,8 +104,6 @@ let formatPostText = function(post) {
 
         wasInc = inc;
     }
-    
-    console.log(newArr);
 
     return newArr;
 }

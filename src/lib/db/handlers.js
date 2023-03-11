@@ -188,6 +188,24 @@ backend.postCreate = async ({content}, {user,db}) => {
     if (reply)
         reply = reply.url.split('/').pop();
 
+    if (reply) {
+        let replyData = (await db.all('SELECT * FROM post WHERE id = ?', [
+            reply
+        ]));
+
+        let replyUser = '';
+        if (replyData && replyData[0])
+            replyUser = replyData[0].username;
+
+        await db.run('INSERT INTO messages (username, content, time,read) VALUES (?, ?, ?, ?)', [
+            replyUser,
+            `@${user} replied to #${reply} on #${id}`,
+            Math.floor(new Date() * 1000),
+            0
+        ]);
+
+    }
+        
     await db.run('INSERT INTO post (username, id, content, rating, reply, time) VALUES (?, ?, ?, ?, ?, ?)', [
         user,
         id,
