@@ -3,13 +3,15 @@
     import Button from '$lib/components/Button.svelte';
     import {setLocation} from '$lib/util.js';
 
-    export let data;
+    export let data, noRatings;
 </script>
 
 <p>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','hot')}}>Hot</Button>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','rating')}}>Top</Button>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','time')}}>Recent</Button>
+    {#if !noRatings}
+        <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','hot')}}>Hot</Button>
+        <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','rating')}}>Top</Button>
+        <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','time')}}>Recent</Button>
+    {/if}
 </p>
 
 {#if data && data.postJson && data.postJson.data}

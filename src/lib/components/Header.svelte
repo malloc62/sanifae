@@ -40,6 +40,15 @@
     <a href='/'>
         <img src='/icon_sanifae.svg' alt='Sanifae Logo'>
     </a>
+    {#if data.read > 0}
+        <a href='/messages'>
+            <img src='/unread.svg' alt='Messages'>
+        </a>
+    {:else}
+        <a href='/messages'>
+            <img src='/read.svg' alt='Messages'>
+        </a>
+    {/if}
     {#if data.username && data.username != 'false'}
         <a href='/users/{data.username}'>
             {data.username}

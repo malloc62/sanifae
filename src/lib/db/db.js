@@ -83,6 +83,13 @@ async function initDb() {
         username CHAR(64), \
         following CHAR(64) \
     )');  
+
+    await db.run('CREATE TABLE IF NOT EXISTS messages (\
+        username CHAR(64), \
+        content CHAR(10240), \
+        time INTEGER, \
+        read INTEGER \
+    )');  
 }
 
 let backendProxy = async ({route, backendParams}) => {
@@ -99,7 +106,7 @@ let backendProxy = async ({route, backendParams}) => {
     console.log(user);
     
     if ((!user || user == '') && AUTH_ACTIONS.indexOf(route) != -1) return {'success': 'Not authorized.' };
-3
+
     let isAdmin = false; 
     if (user && user != '') isAdmin = ((await backend.userRoles({user}, {db})) || []).indexOf('Admin') != -1;
 

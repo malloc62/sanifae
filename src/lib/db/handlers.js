@@ -202,9 +202,23 @@ backend.postCreate = async ({content}, {user,db}) => {
 
 backend.postDelete = async ({id}, {user, admin, db}) => {
     if (admin) {
+        let postUser = await db.all('SELECT * from post where id = ?',[
+            id
+        ]) || {};
+
+        postUser = postUser[0].username;
+
         await db.run('DELETE FROM post WHERE id = ?', [
             id
         ])
+
+        await db.run('INSERT INTO messages (username, content, time,read) VALUES (?, ?, ?, ?)', [
+            postUser,
+            `#${id} was deleted by an admin for rule violations.`,
+            Math.floor(new Date() * 1000),
+            0
+        ]);
+
     } else {
         await db.run('DELETE FROM post WHERE username = ? AND id = ?', [
             user,
@@ -248,7 +262,7 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}, {admin, db}) =>
 
     sort = (LEGAL_SORTS[sort]) || 'rating';
 
-    if (sort + '' != sort) sort = 'rating';
+    if (sort + '' !== sort) sort = 'rating';
 
     sort = sort.replaceAll('%d',Math.floor(new Date() * 1000));
 
@@ -297,9 +311,9 @@ backend.vote = async ({id, vote}, {user, db}) => {
     
     var isCreator = (await db.all('SELECT * from post WHERE id = ?', [
         id
-    ]))[0].username == user;
+    ]))[0].username;
 
-    if (isCreator)
+    if (isCreator == user)
         return {success: 'fail' };
 
     await db.run('DELETE FROM vote WHERE username = ? AND id = ?', [
@@ -325,6 +339,13 @@ backend.vote = async ({id, vote}, {user, db}) => {
         down,
         calcVote(up,down),
         id
+    ]);
+
+    await db.run('INSERT INTO messages (username, content, time,read) VALUES (?, ?, ?, ?)', [
+        isCreator,
+        `@${user} ${vote == 'up' ? 'upvoted' : 'downvoted'} #${id}`,
+        Math.floor(new Date() * 1000),
+        0
     ]);
 
     var user = await db.all('SELECT * from post WHERE id = ?', [
@@ -353,12 +374,20 @@ backend.token = async ({cookies}, {db}) => {
 }
 
 backend.follow = async ({target}, {user, db}) => {
+    var userExists = ((await db.all('SELECT * FROM user WHERE username = ?',[
+        target
+    ])) || []).length;
+    
+    if (userExists < 1) return;
+
     var isFollowing = await db.all('SELECT * FROM follow WHERE username = ? AND following = ?',[
         user,
         target
     ]);
 
-    if (isFollowing && isFollowing.length > 0) {
+    let unfollowed = (isFollowing && isFollowing.length > 0);
+
+    if (unfollowed) {
         await db.run('DELETE FROM follow WHERE username = ? AND following = ?',[
             user,
             target
@@ -378,9 +407,31 @@ backend.follow = async ({target}, {user, db}) => {
         target
     ]);
 
+    await db.run('INSERT INTO messages (username, content, time,read) VALUES (?, ?, ?, ?)', [
+        target,
+        `@${user} ${unfollowed ? 'is now following' : 'unfollowed'} you`,
+        Math.floor(new Date() * 1000),
+        0
+    ]);
+
     return {'success': 'User followed/unfollowed.', 'data': {following, followers}};
 };
 
+backend.messages = async ({isRead}, {user, db}) => {
+    var msg = await db.all('SELECT * FROM messages WHERE username = ? ORDER BY time DESC', [
+        user
+    ]) || [];
+
+    if (isRead) {
+        await db.run('UPDATE messages SET read = 1 WHERE username = ?', [
+            user
+        ]);
+    }
+
+    let read = msg.filter(x => !x.read).length;
+
+    return {'data': {msg, read}};
+};
 
 
 export {

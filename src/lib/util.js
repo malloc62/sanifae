@@ -7,6 +7,12 @@ const EXTENSION_MAP = {
     'mp4': 'video'
 }
 
+const formats = [
+    'italic',
+    'bold',
+    'bolditalic'
+];
+
 let checkLength = function(string, field, lowerBound, upperBound) {
     if (string.length < lowerBound) {
         if (string.length == 0) {
@@ -66,11 +72,49 @@ let safeName = function (text) {
     return text.replaceAll(/[^A-Za-z0-9\-\_]/g, '');
 }
 
-let formatPost = function(post) {
+let formatPostText = function(post) {
+    post = post.map(x => (x === x + '') ? x.split(/(\*)/).filter(x => x != '') : x).flat();
+
+    let inc = false;
+    let formatType = -1;
+    let wasInc = false;
+    let dir = 1;
+    
+    let newArr = [];
+
+    for (var i = 0; i < post.length; i++) {
+        inc = (post[i] == '*');
+
+        if (inc) {
+            formatType += dir;
+        } else {
+            if (wasInc) dir = !dir + 0;
+            if (dir) formatType = -1;
+
+            let formatTypeStr = formats[formatType] || 'default';
+
+            if (post[i] === post[i] + '') {
+                newArr.push({'type': 'text', 'format': formatTypeStr, 'content': post[i]})
+            } else {
+                let content = post[i];
+                content.format = formatTypeStr;
+                newArr.push(content);
+            }
+        }
+
+        wasInc = inc;
+    }
+    
+    console.log(newArr);
+
+    return newArr;
+}
+
+let formatPost = function(post, ignoreImg) {
     post = post.split('\n');
 
     post = post.map(subPost => {
-        return subPost.split(' ');
+        return subPost.split(/( )/);
     });
 
     post = post.map(line => {
@@ -78,7 +122,7 @@ let formatPost = function(post) {
             var splitPost = subPost.split('||');
             
 
-            if (splitPost.length > 1) {
+            if (splitPost.length > 1 && !ignoreImg) {
                 var cap1 = splitPost[0];
     
                 if (cap1 == 'img') {
@@ -94,7 +138,7 @@ let formatPost = function(post) {
             } else if (subPost[0] == '@' || subPost[0] == '#') {
                 var subPostIn = safeName(subPost.substring(0));
 
-                var type = (subPost[0] == '@') ? 'user' : 'post';
+                var type = (subPost[0] == '@') ? 'users' : 'post';
 
                 splitPost = {'type': 'link', 'display': subPost, 'subtype': type, 'url': `/${type}/${subPostIn}`};
 
@@ -103,7 +147,7 @@ let formatPost = function(post) {
                 var url;
                 var extension = subPost.split('.').pop().toLowerCase();
 
-                if (EXTENSION_MAP[extension]) {
+                if (EXTENSION_MAP[extension] && !ignoreImg) {
                     url = `/embed?url=${encodeURIComponent(subPost)}`;
                     splitPost = [
                         {'type': 'link', 'display': subPost, 'url': url},
@@ -119,7 +163,7 @@ let formatPost = function(post) {
 
             return subPost;
         })
-        return line.flat();
+        return formatPostText(line.flat());
     });
 
     return post;

@@ -82,13 +82,19 @@
         <p>Create a post for the world to see.</p>
         <h2>Post syntax</h2>
         <p>
-            <b>img||filename.blah</b> embeds a user-uploaded file in this site
+            <b>img||file.name</b> embeds a user-uploaded file in this site
         </p>
         <p>
             <b>@user</b> mentions a user
         </p>
         <p>
             <b>#post</b> replies to a post by ID
+        </p>
+        <p>
+            <b>*x*</b> produces italic text
+        </p>
+        <p>
+            <b>**x**</b> produces bolded text
         </p>
     </span>
 </Area>

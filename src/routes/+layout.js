@@ -4,5 +4,8 @@ export async function load({ fetch }) {
 
     const username = await res.json();
 
-    return { username: username.data };
+    const res2 = await fetch(`/api/messages`);
+    const read = (await res2.json()).data.read;
+
+    return { username: username.data, read };
 }
