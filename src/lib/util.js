@@ -13,6 +13,12 @@ const formats = [
     'bolditalic'
 ];
 
+const postTypes = {
+    '@': 'users',
+    '#': 'post',
+    '%': 'chat'
+}
+
 let checkLength = function(string, field, lowerBound, upperBound) {
     if (string.length < lowerBound) {
         if (string.length == 0) {
@@ -133,10 +139,10 @@ let formatPost = function(post, ignoreImg) {
 
                     return splitPost;
                 }
-            } else if (subPost[0] == '@' || subPost[0] == '#') {
+            } else if (postTypes[subPost[0] + '']) {
                 var subPostIn = safeName(subPost.substring(0));
 
-                var type = (subPost[0] == '@') ? 'users' : 'post';
+                var type = postTypes[subPost[0]];
 
                 splitPost = {'type': 'link', 'display': subPost, 'subtype': type, 'url': `/${type}/${subPostIn}`};
 

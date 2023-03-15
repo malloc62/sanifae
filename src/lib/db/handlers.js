@@ -178,8 +178,6 @@ backend.postCreate = async ({content}, {user,db}) => {
     if (lengthCheck)
         return lengthCheck;
 
-    if (!content) return {'success': 'There is no post!' };
-
     var id = randomBytes(10).toString('hex');
 
     var postFlatten = formatPost(content).flat();
@@ -378,8 +376,13 @@ backend.vote = async ({id, vote}, {user, db}) => {
     return {data: {up,down}};
 }
 
-backend.token = async ({cookies}, {db}) => {
-    var tokenIn = cookies.get('token');
+backend.token = async ({cookies, token}, {db}) => {
+    var tokenIn;
+    if (token) {
+        tokenIn = token;
+    } else {
+        tokenIn = cookies.get('token');
+    }
 
     var existingAccounts = await db.all('SELECT username from token WHERE token = ?',[
         tokenIn
@@ -388,7 +391,7 @@ backend.token = async ({cookies}, {db}) => {
     if (!existingAccounts || existingAccounts.length < 1)
         return false;
 
-    return {data: existingAccounts[0].username};
+    return {data: existingAccounts[0].username, token: tokenIn};
 }
 
 backend.follow = async ({target}, {user, db}) => {
@@ -451,6 +454,33 @@ backend.messages = async ({isRead}, {user, db}) => {
     return {'data': {msg, read}};
 };
 
+backend.chatAdd = async ({content, room}, {user,db}) => {
+    if (!content) return {'success': 'No message provided.'}
+
+    var lengthCheck = checkLength(content,'Post content',1,10240);
+
+    if (lengthCheck)
+        return lengthCheck;
+        
+    let time = Math.floor(new Date() * 1000);
+
+    await db.run('INSERT INTO chat (username, content, time, room) VALUES (?, ?, ?, ?)', [
+        user,
+        content,
+        time,
+        room
+    ])
+
+    return {'data': {content, username: user, time, room}};
+}
+
+backend.chatGet = async ({room}, {user,db}) => {
+    let messages = await db.all('SELECT * from chat WHERE room = ? ORDER BY time LIMIT 1000', [
+        room
+    ])
+
+    return {'data': messages};
+}
 
 export {
     backend,

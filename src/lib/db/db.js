@@ -7,7 +7,8 @@ const AUTH_ACTIONS = [
     'vote',
     'postDelete',
     'pfp',
-    'follow'
+    'follow',
+    'chatAdd'
 ];
 
 const FILE_DIRS = [
@@ -62,6 +63,13 @@ async function initDb() {
         time INTEGER \
     )');
 
+    await db.run('CREATE TABLE IF NOT EXISTS chat ( \
+        username CHAR(64), \
+        content CHAR(10240), \
+        time INTEGER, \
+        room CONTENT(64) \
+    )');
+
     await db.run('CREATE TABLE IF NOT EXISTS vote ( \
         id CHAR(64), \
         username CHAR(64), \
@@ -99,7 +107,12 @@ let backendProxy = async ({route, backendParams}) => {
 
     extraParams['db'] = db;
 
-    let user = (await backend.token({cookies: backendParams.cookies},extraParams)) || {};
+    let jason = {cookies: backendParams.cookies};
+
+    if (backendParams.token)
+        jason.token = backendParams.token;
+
+    let user = (await backend.token(jason,extraParams)) || {};
 
     user = user.data;
 

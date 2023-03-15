@@ -47,6 +47,7 @@
     export let data;
 
     import Header from '$lib/components/Header.svelte';
+
 </script>
 
 <div id='content'>
