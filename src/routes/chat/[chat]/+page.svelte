@@ -15,7 +15,7 @@
     if (dev) {
         socket = io('http://localhost:7272/');
     } else {
-        socket = io('http://ws.tdgmdev.net/');
+        socket = io('https://ws.tdgmdev.net/');
     }
     
 
