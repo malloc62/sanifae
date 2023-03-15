@@ -50,7 +50,7 @@
 
 <style>
     #mainChat {
-        height: calc(100% - 160px);
+        height: 100%;
         width: calc(100vw - 30px);
         padding: 15px;
         overflow: auto;

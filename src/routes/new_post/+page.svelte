@@ -91,7 +91,7 @@
             <b>#post</b> replies to a post by ID
         </p>
         <p>
-            <b>%chat</b> links to a chatroom
+            <b>%post</b> links to a chatroom
         </p>
         <p>
             <b>*x*</b> produces italic text

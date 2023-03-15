@@ -100,7 +100,12 @@ let formatPostText = function(post) {
             let formatTypeStr = formats[formatType] || 'default';
 
             if (post[i] === post[i] + '') {
-                newArr.push({'type': 'text', 'format': formatTypeStr, 'content': post[i]})
+                let lastEntry = (newArr.length > 0) ? newArr[newArr.length - 1] : {};
+                if (lastEntry.type == 'text' && lastEntry.format == formatTypeStr) {
+                    newArr[newArr.length - 1].content += post[i];
+                } else {
+                    newArr.push({'type': 'text', 'format': formatTypeStr, 'content': post[i]})
+                }
             } else {
                 let content = post[i];
                 content.format = formatTypeStr;
