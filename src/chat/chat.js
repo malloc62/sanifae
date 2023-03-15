@@ -2,8 +2,12 @@ import { Server } from 'socket.io'
 import { backendProxy } from '../lib/db/db.js'
 
 function configureServer(server) {
-    const io = new Server(server.httpServer)
-
+    const io = new Server(server, {
+        cors: {
+            origin: '*',
+          }   
+    });
+    
     io.on('connection', (socket) => {
         socket.on('join', async (id) => {
             socket.join(id);

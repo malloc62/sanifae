@@ -1,5 +1,6 @@
 <script>
     import { io } from 'socket.io-client'
+    import { dev } from '$app/environment';
     import PostBody from '$lib/components/PostBody.svelte';
 
     /** @type {import('./$types').PageData} */
@@ -9,13 +10,21 @@
     let messages = [];
     let input;
 
-    const socket = io();
+    let socket;
+
+    if (dev) {
+        socket = io('http://localhost:7272/');
+    } else {
+        socket = io('http://ws.tdgmdev.net/');
+    }
+    
 
     socket.emit('join',id);
 
     function scroll() {
         setTimeout(function() {
-            input.lastChild.scrollIntoView()
+            if (input && input.lastChild)
+                input.lastChild.scrollIntoView()
         },200);
     }
 
