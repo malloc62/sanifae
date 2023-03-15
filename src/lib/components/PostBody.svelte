@@ -1,11 +1,14 @@
 <style>
     img, video {
         max-width: 100px;
+        max-height: 200px;
         margin: 5px;
     }
 
     .only-img {
-        max-width: 450px;
+        max-width: 200px;
+        max-height: 450px;
+        display: block;
     }
 
     p {
