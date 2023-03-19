@@ -184,7 +184,7 @@ backend.postCreate = async ({content, edit}, {user,db}) => {
 
     var id = randomBytes(10).toString('hex');
 
-    if (edit && userData[0] && userData[0].user === user)
+    if (edit && userData[0] && userData[0].username === user)
         id = edit;
 
     var postFlatten = formatPost(content).flat();
