@@ -7,9 +7,9 @@
     export let data;
 </script>
 
-<p>
+<span>
     <Button clickFunc={() => { window.location.search = setLocation(window.location,'type',('all')) }}>All users</Button>
     <Button clickFunc={() => { window.location.search = setLocation(window.location,'type',('follow')) }}>Following only</Button>
-</p>
+</span>
 
 <PostList data={data} />

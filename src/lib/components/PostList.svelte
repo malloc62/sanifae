@@ -6,21 +6,21 @@
     export let data, noRatings = false;
 </script>
 
-<p>
+<span>
     {#if !noRatings}
         <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','hot')}}>Hot</Button>
         <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','rating')}}>Top</Button>
         <Button clickFunc={() => { window.location.search = setLocation(window.location,'sort','time')}}>Recent</Button>
     {/if}
-</p>
+</span>
 
-<p>
+<span>
     {#if data.id > 0}
         <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)-1)) }} href='#'>Page {(data.id)-1}</Button>
     {/if}
     <Button>Page {(data.id)}</Button>
     <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)+1)) }} href='#'>Page {(data.id)+1}</Button>
-</p>
+</span>
 
 {#if data && data.postJson && data.postJson.data}
     {#each data.postJson.data as post}
