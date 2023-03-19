@@ -5,6 +5,8 @@
         border-bottom: solid var(--dark-3) 3px;
 
         font-family: 'Open Sans';
+
+        margin-right: 0.2rem;
     }
 
     .button a {
