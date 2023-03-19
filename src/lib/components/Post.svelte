@@ -78,6 +78,11 @@
         font-style: italic;
         font-weight: normal;
     }
+
+    .votes {
+        display: flex;
+        
+    }
 </style>
 
 {#if success}
@@ -108,7 +113,7 @@
         <span slot="main">
             <PostBody content={content} />
         </span>
-        <span slot="footer">
+        <span slot="footer" class='votes'>
             <PostButton
                 clickFunc={() => vote('up')}
                 data={upvotes * 1}
@@ -122,21 +127,21 @@
             {#if isAuthor}
                 <PostButton
                     clickFunc={() => deletePost()}
-                    data={'Delete'}
+                    data={''}
                     icon='/delete.svg'
                 />
             {/if}
             {#if id}
                 <PostButton
                     href='/post/{id}'
-                    data={'View'}
+                    data={''}
                     icon='/view.svg'
                 />
             {/if}
             <PostButton
                 href='/new_post?init=%23{id}'
-                data={'Reply'}
-                icon='/view.svg'
+                data={''}
+                icon='/reply.svg'
             />
         </span>
     </Area>

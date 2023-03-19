@@ -190,6 +190,7 @@ let safePath = function(path) {
 let setLocation = function(location, key, value) {
     var loc = new URL(location).searchParams;
 
+    loc.set('page',0);
     loc.set(key,value);
     return loc.toString();
 }

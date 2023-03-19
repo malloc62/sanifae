@@ -2,12 +2,12 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="38.195164mm"
-   height="62.605831mm"
-   viewBox="0 0 38.195163 62.605831"
+   width="30.124826mm"
+   height="31.962015mm"
+   viewBox="0 0 30.124826 31.962016"
    version="1.1"
    id="svg14062"
-   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    sodipodi:docname="downvote.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,13 +24,13 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="2.0560856"
-     inkscape:cx="0.48636107"
-     inkscape:cy="32.829372"
-     inkscape:window-width="1920"
-     inkscape:window-height="996"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:zoom="2.9077441"
+     inkscape:cx="26.996874"
+     inkscape:cy="74.112437"
+     inkscape:window-width="920"
+     inkscape:window-height="1006"
+     inkscape:window-x="24"
+     inkscape:window-y="46"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
@@ -39,14 +39,16 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-48.929905,-129.52741)">
+     transform="translate(-48.865981,-130.90513)">
     <path
-       style="fill:none;fill-opacity:1;stroke:#aaa;stroke-width:11.90625;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       d="m 56.684592,149.59814 10.887303,12.1325 13.600048,-26.2501"
-       id="path3462" />
+       style="fill:none;fill-opacity:1;stroke:#aaaaaa;stroke-width:7.93753;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 52.834746,146.97237 11.093647,11.9262 11.09365,-11.9262"
+       id="path3462"
+       sodipodi:nodetypes="ccc" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#aaa;stroke-width:11.90625;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       d="M 79.370381,172.06252 68.483078,159.93002 54.88303,186.18012"
-       id="path8000" />
+       style="fill:#002368;stroke:#aaaaaa;stroke-width:7.93801;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="M 63.928394,151.30806 V 134.87414"
+       id="path610"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>

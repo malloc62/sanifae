@@ -2,9 +2,12 @@
     .votes {
         font-weight: bold;
         font-size: 0.9rem;
+        margin-left: 5px;
     }
     .vote-area {
-        margin-right: 30px;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
     }
 
     .button {
@@ -25,7 +28,7 @@
     <a on:click={clickFunc} href='{href}'>
         <img src='{icon}' class='button' alt='Vote button'>
     </a>
-    <span class='votes'>
+    <div class='votes'>
         {data}
-    </span>
+    </div>
 </span>
