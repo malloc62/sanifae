@@ -18,6 +18,8 @@
 
     let currentState = 'editor';
 
+    let edit = $page.url.searchParams.get('edit') || '';
+
     function setState(editor) {
         currentState = editor;
     }
@@ -50,6 +52,7 @@
             method='POST' 
             on:submit|preventDefault={async e => form = JSON.parse(await handleSubmit(e)) }
         >
+            <textarea name='edit' style='display: none;' value={edit}></textarea>
             <textarea name='content' style='display: none;' value={formContent}></textarea>
             <input formaction="?/create" type='submit' value='Post'  bind:this={formBody} style='display: none;'>
             {#if currentState == 'editor'}
@@ -88,7 +91,7 @@
             <b>@user</b> mentions a user
         </p>
         <p>
-            <b>#post</b> replies to a post by ID
+            <b>#post</b> tags a post as a reply or subtopic
         </p>
         <p>
             <b>%post</b> links to a chatroom

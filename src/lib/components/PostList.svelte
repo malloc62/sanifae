@@ -3,7 +3,7 @@
     import Button from '$lib/components/Button.svelte';
     import {setLocation} from '$lib/util.js';
 
-    export let data, noRatings;
+    export let data, noRatings = false;
 </script>
 
 <p>

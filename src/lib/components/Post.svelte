@@ -97,7 +97,7 @@
             Failed to get post.
         </p>
     </Area>
-{:else}
+{:else if content}
     <Area>
         <span slot="header" id='header'>
             <img class='pfp' src='/img/pfp/{username}.png'/>
@@ -129,6 +129,11 @@
                     clickFunc={() => deletePost()}
                     data={''}
                     icon='/delete.svg'
+                />
+                <PostButton
+                    href='/new_post?edit={id}'
+                    data={''}
+                    icon='/edit.svg'
                 />
             {/if}
             {#if id}

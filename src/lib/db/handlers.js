@@ -170,7 +170,7 @@ backend.login = async ({user, pass, cookies},{db}) => {
     return { success: 'Successfully logged into account.', data: token, location: '/'};
 }
 
-backend.postCreate = async ({content}, {user,db}) => {
+backend.postCreate = async ({content, edit}, {user,db}) => {
     if (!content) return {'success': 'No post provided.'}
 
     var lengthCheck = checkLength(content,'Post content',1,10240);
@@ -178,40 +178,69 @@ backend.postCreate = async ({content}, {user,db}) => {
     if (lengthCheck)
         return lengthCheck;
 
+    let userData = (await db.all('SELECT * FROM post WHERE id = ?', [
+        edit || ''
+    ]));
+
     var id = randomBytes(10).toString('hex');
 
+    if (edit && userData[0] && userData[0].user === user)
+        id = edit;
+
     var postFlatten = formatPost(content).flat();
-    var reply = postFlatten[postFlatten.findIndex(x => x.subtype == 'post')];
+    var reply = postFlatten.filter(x => x.subtype == 'post').map(x => x.url.split('/').pop());
+    var firstReply = reply[0];
 
-    if (reply)
-        reply = reply.url.split('/').pop();
+    await db.run('DELETE from tag WHERE id = ?', [
+        id
+    ])
 
-    if (reply) {
+    if (firstReply) {
         let replyData = (await db.all('SELECT * FROM post WHERE id = ?', [
-            reply
+            firstReply
         ]));
 
         let replyUser = '';
         if (replyData && replyData[0])
             replyUser = replyData[0].username;
 
-        await db.run('INSERT INTO messages (username, content, time,read) VALUES (?, ?, ?, ?)', [
-            replyUser,
-            `@${user} replied to #${reply} on #${id}`,
-            Math.floor(new Date() * 1000),
-            0
-        ]);
+        if (replyUser && !edit) {
+            await db.run('INSERT INTO messages (username, content, time,read) VALUES (?, ?, ?, ?)', [
+                replyUser,
+                `@${user} replied to #${irstReply} on #${id}`,
+                Math.floor(new Date() * 1000),
+                0
+            ]);
+        }
 
     }
         
-    await db.run('INSERT INTO post (username, id, content, rating, reply, time) VALUES (?, ?, ?, ?, ?, ?)', [
-        user,
-        id,
-        content,
-        calcVote(0,0),
-        reply || '',
-        Math.floor(new Date() * 1000)
-    ])
+    if (id === edit) {
+        await db.run('UPDATE post SET content = ? WHERE id = ?', [
+            content,
+            id
+        ])
+    
+    } else {
+        await db.run('INSERT INTO post (username, id, content, rating, reply, time) VALUES (?, ?, ?, ?, ?, ?)', [
+            user,
+            id,
+            content,
+            calcVote(0,0),
+            firstReply || '',
+            Math.floor(new Date() * 1000)
+        ])
+    
+    }
+
+    
+    for (var i = 0; i < reply.length; i++) {
+        await db.run('INSERT INTO tag (id, reply) VALUES (?, ?)', [
+            id,
+            reply[i]
+        ])
+    }
+    
 
     return {'success': 'Your post has been broadcasted!', 'href': `/post/${id}` };
 }
@@ -298,7 +327,7 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}, {admin, db}) =>
 
         if (posts.length == 0) posts.push({});
 
-        posts.push(...(await db.all('SELECT * from post WHERE reply = ? ORDER BY '+sort+' DESC LIMIT ?, ?', [
+        posts.push(...(await db.all('SELECT * from post WHERE id IN (SELECT id FROM tag WHERE reply = ?) ORDER BY '+sort+' DESC LIMIT ?, ?', [
             id,
             ...pageParams
         ])))
@@ -309,7 +338,7 @@ backend.postBulk = async ({page, id, user, cookies, sort, type}, {admin, db}) =>
             ...pageParams
         ])
     } else if (type == 'follow') {
-        posts = await db.all('SELECT * from post WHERE username IN (SELECT following from follow WHERE username = ?) ORDER BY '+sort+' DESC LIMIT ?, ?', [
+        posts = await db.all('SELECT * from post WHERE username IN (SELECT following FROM follow WHERE username = ?) ORDER BY '+sort+' DESC LIMIT ?, ?', [
             userAuth,
             ...pageParams
         ])

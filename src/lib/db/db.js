@@ -63,6 +63,11 @@ async function initDb() {
         time INTEGER \
     )');
 
+    await db.run('CREATE TABLE IF NOT EXISTS tag ( \
+        id CHAR(64), \
+        reply CHAR(64) \
+    )');
+
     await db.run('CREATE TABLE IF NOT EXISTS chat ( \
         username CHAR(64), \
         content CHAR(10240), \
