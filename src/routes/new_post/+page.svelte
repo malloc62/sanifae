@@ -10,11 +10,15 @@
 
     /** @type {import('./$types').ActionData} */
     export let form;
+    let formBody, anchor;
 
+    $: if (anchor && form?.success && form?.href) {
+        anchor.click();
+    }
+    
     let uploadForm = {};
 
     let formContent = $page.url.searchParams.get('init') || '';
-    let formBody;
 
     let currentState = 'editor';
 
@@ -76,7 +80,7 @@
         <p>
             {#if form?.success}
                 {#if form?.href}
-                    <a href='{form?.href}'>{form?.success}</a>
+                    <a href='{form?.href}' bind:this='{anchor}'>{form?.success}</a>
                 {:else}
                     {form?.success}
                 {/if}
