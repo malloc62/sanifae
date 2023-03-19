@@ -207,7 +207,7 @@ backend.postCreate = async ({content, edit}, {user,db}) => {
         if (replyUser && !edit) {
             await db.run('INSERT INTO messages (username, content, time,read) VALUES (?, ?, ?, ?)', [
                 replyUser,
-                `@${user} replied to #${irstReply} on #${id}`,
+                `@${user} replied to #${firstReply} on #${id}`,
                 Math.floor(new Date() * 1000),
                 0
             ]);
