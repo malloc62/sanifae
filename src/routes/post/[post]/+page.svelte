@@ -21,5 +21,4 @@
     ></Post>
 {/if}
 
-<h2>Replies</h2>
 <PostList data={data} />

@@ -1,6 +1,6 @@
 <style>    
     #content {
-        background: var(--light-2);
+        background: url(/bg.svg) center center / cover;
 
         height: 100vh;
         width: 100vw;

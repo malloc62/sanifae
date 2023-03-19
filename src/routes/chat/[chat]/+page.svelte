@@ -87,6 +87,10 @@
         font-weight: normal;
         margin-left: 0.5rem;
     }
+
+    #mainChat {
+        background: var(--light-1);
+    }
 </style>
 
 <div id='mainChat' bind:this={input}>

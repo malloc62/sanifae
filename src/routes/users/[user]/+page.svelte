@@ -155,6 +155,4 @@
     </Area>
 {/if}
 
-<h2>Posts</h2>
-
 <PostList data={data} />

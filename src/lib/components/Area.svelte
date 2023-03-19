@@ -1,13 +1,11 @@
 <style>
     #content {
         background: var(--light-1);
-        box-shadow: 0px 3px 5px 3px var(--dark-2);
+        box-shadow: 0px 3px 5px 3px rgba(0,0,0,0.1);
 
         width: min(700px, 90vw);
         padding-top: 8px;
         margin: 25px;
-
-        border-radius: 25px;
 
         display: flex;
         flex-direction: column;
