@@ -91,17 +91,18 @@
             </div>
         </span>
         <span slot="main">
-            <p class='data'>
-                <span class='follower'>
-                    <b>{userData.reputation}</b> Reputation
-                </span>
-                <span class='follower'>
-                    <b>{userData.upvotes}</b> Upvotes
-                </span>
-                <span class='follower'>
-                    <b>{userData.downvotes}</b> Downvotes
-                </span>
-            </p>
+            <div class='sections'>
+                <div>
+                    <p class='data'>
+                        <span class='follower'>
+                            <b>{userData.reputation}</b> reputation <b>(+{userData.upvotes}) (-{userData.downvotes})</b>
+                        </span>
+                    </p>
+                </div>
+                <div>
+
+                </div>
+            </div>
 
             {#if userData.rolesArr}
                 <p>
@@ -113,7 +114,7 @@
 
             <div class='sections'>   
                 <div>           
-                <h2>{following.length} following</h2>
+                <p><b>{following.length}</b> following</p>
                     {#each following as user}
                         <a href='/users/{user.following}'>
                             <img class='pfp-small' src='/img/pfp/{user.following}.png'/> 
@@ -122,7 +123,7 @@
                 </div>
 
                 <div>
-                    <h2>{followers.length} followers</h2>
+                    <p><b>{followers.length}</b> followers</p>
                     {#each followers as user}
                         <a href='/users/{user.username}'>
                             <img class='pfp-small' src='/img/pfp/{user.username}.png'/>    
@@ -131,10 +132,15 @@
                 </div>
             </div>
 
-            {#if data.resAcc.data == userData.username}
-                <h2>Set PFP</h2>
-                <FileUpload bind:form={uploadForm} type='small' apiUrl={'/api/pfp'}/>
-            {/if}
+            <div class='sections'>  
+                <div>
+                    {#if data.resAcc.data == userData.username}
+                        <h2>Set PFP</h2>
+                        <FileUpload bind:form={uploadForm} type='small' apiUrl={'/api/pfp'}/>
+                    {/if}
+                </div>
+            
+            </div>
         </span>
         <span slot="footer">
 
