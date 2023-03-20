@@ -14,14 +14,6 @@
     {/if}
 </span>
 
-<span>
-    {#if data.id > 0}
-        <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)-1)) }} href='#'>Page {(data.id)-1}</Button>
-    {/if}
-    <Button>Page {(data.id)}</Button>
-    <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)+1)) }} href='#'>Page {(data.id)+1}</Button>
-</span>
-
 {#if data && data.postJson && data.postJson.data}
     {#each data.postJson.data as post}
         <Post
@@ -36,3 +28,11 @@
         ></Post>
     {/each}
 {/if}
+
+<span>
+    {#if data.id > 0}
+        <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)-1)) }} href='#'>Page {(data.id)-1}</Button>
+    {/if}
+    <Button>Page {(data.id)}</Button>
+    <Button clickFunc={() => { window.location.search = setLocation(window.location,'page',((data.id)+1)) }} href='#'>Page {(data.id)+1}</Button>
+</span>
