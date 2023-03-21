@@ -14,7 +14,7 @@ const roles = [
 
 const FILE_SIZE_LIMIT = 1024*1024*16;
 
-const VALID_EXTENSIONS = ['png','jpg','jpeg','gif','svg', 'mp4'];
+const VALID_EXTENSIONS = ['png','jpg','jpeg','gif','svg', 'mp4', 'mov'];
 
 
 import { hash, compare } from 'bcrypt'
