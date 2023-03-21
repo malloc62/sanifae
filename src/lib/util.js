@@ -4,7 +4,8 @@ const EXTENSION_MAP = {
     'jpeg': 'img',
     'gif': 'img',
     'svg': 'img', 
-    'mp4': 'video'
+    'mp4': 'video',
+    'mov': 'video'
 }
 
 const formats = [
