@@ -467,6 +467,20 @@ backend.follow = async ({target}, {user, db}) => {
     return {'success': 'User followed/unfollowed.', 'data': {following, followers}};
 };
 
+backend.bio = async ({bio}, {user, db}) => {
+    var lengthCheck = checkLength(bio,'Post content',1,256);
+
+    if (lengthCheck)
+        return lengthCheck;
+
+    await db.run('UPDATE user SET pinned = ? WHERE username = ?', [
+        bio,
+        user
+    ]) || [];
+
+    return;
+};
+
 backend.messages = async ({isRead}, {user, db}) => {
     var msg = await db.all('SELECT * FROM messages WHERE username = ? ORDER BY time DESC', [
         user

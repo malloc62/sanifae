@@ -3,6 +3,9 @@
     import Area from '$lib/components/Area.svelte';
     import PostList from '$lib/components/PostList.svelte';
     import FileUpload from '$lib/components/FileUpload.svelte';
+    import PostBody from '$lib/components/PostBody.svelte';
+    import Form from '$lib/components/Form.svelte';
+
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -13,6 +16,8 @@
 
     let following = data.postJsonUser.following;
     let followers = data.postJsonUser.followers;
+
+    let submitter;
 
     function follow() {
         let fData = (new FormData());
@@ -27,6 +32,12 @@
             following = xJson.following;
             followers = xJson.followers;
         })
+    }
+
+    async function inputHandler(e) {
+        if(!e.key || (e.key == "Enter" && !e.shiftKey)) {
+            submitter.click();
+        }
     }
 </script>
 
@@ -62,6 +73,11 @@
         text-align: right;
         max-height: 300px;
         overflow-y: auto;
+    }
+
+    textarea {
+        width: 80%;
+        height: 5rem;
     }
 
     .sections div:nth-child(1) {
@@ -100,7 +116,20 @@
                     </p>
                 </div>
                 <div>
-
+                    {#if data.resAcc.data == userData.username}
+                        <Form action='/api/bio' format={false}>
+                            <textarea class='follower' name='bio' on:mouseleave={inputHandler}  on:click={inputHandler} on:keydown={inputHandler}>
+                                {userData.pinned || ''}
+                            </textarea>
+                            <input type='Submit' hidden='true' bind:this={submitter}>
+                        </Form>
+                    {:else}
+                        <p class='data'>
+                            <span class='follower'>
+                                <PostBody content={userData.pinned || ''} excludeImg={true} />
+                            </span>
+                        </p>
+                    {/if}
                 </div>
             </div>
 

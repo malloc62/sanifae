@@ -121,6 +121,7 @@ let formatPostText = function(post) {
 }
 
 let formatPost = function(post, ignoreImg) {
+
     post = post.split('\n');
 
     post = post.map(subPost => {
