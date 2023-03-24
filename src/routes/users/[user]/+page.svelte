@@ -118,9 +118,7 @@
                 <div>
                     {#if data.resAcc.data == userData.username}
                         <Form action='/api/bio' format={false}>
-                            <textarea class='follower' name='bio' on:mouseleave={inputHandler}  on:click={inputHandler} on:keydown={inputHandler}>
-                                {userData.pinned || ''}
-                            </textarea>
+                            <textarea class='follower' name='bio' on:mouseleave={inputHandler}  on:click={inputHandler} on:keydown={inputHandler}>{userData.pinned || ''}</textarea>
                             <input type='Submit' hidden='true' bind:this={submitter}>
                         </Form>
                     {:else}
