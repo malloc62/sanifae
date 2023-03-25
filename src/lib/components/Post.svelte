@@ -131,7 +131,7 @@
                     icon='/delete.svg'
                 />
                 <PostButton
-                    href='/new_post?edit={id}'
+                    href='/new_post?edit={id}&init={encodeURIComponent(content)}'
                     data={''}
                     icon='/edit.svg'
                 />
